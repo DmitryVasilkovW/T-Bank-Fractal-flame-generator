@@ -15,35 +15,28 @@ import java.util.List;
 public class Main {
 
     public static void main(String[] args) {
-        // Параметры генерации
         int width = 1920;
         int height = 1080;
-        int samples = 10_000_000; // Увеличим количество точек
-        short iterations = 200;  // Больше итераций
+        int samples = 10_000_000;
+        short iterations = 200;
         long seed = System.currentTimeMillis();
-        Rect world = new Rect(-3, -3, 6, 6); // Широкая область мира
+        Rect world = new Rect(-3, -3, 6, 6);
 
-        // Создание пустого холста
         FractalImage canvas = FractalImage.create(width, height);
 
-        // Список трансформаций
         List<Transformation> transformations = List.of(
                 point -> new Point(Math.sin(point.getX()) * point.getY(), Math.sin(point.getY()) * point.getX()),
-                // Sinusoidal
                 point -> new Point(point.getX() * Math.sin(point.getY()), point.getY() * Math.sin(point.getX())),
-                // Swirl
                 point -> new Point(point.getX() / (point.getX() * point.getX() + point.getY() * point.getY()),
-                        point.getY() / (point.getX() * point.getX() + point.getY() * point.getY())), // Spherical
+                        point.getY() / (point.getX() * point.getX() + point.getY() * point.getY())),
                 point -> new Point(Math.sin(point.getX() * point.getX() - point.getY() * point.getY()),
-                        Math.sin(2 * point.getX() * point.getY())), // Complex Sin
-                point -> new Point(Math.tan(point.getX()), Math.tan(point.getY())), // Tangent
-                point -> new Point(point.getX() * Math.cos(point.getY()), point.getY() * Math.sin(point.getX())) // Curl
+                        Math.sin(2 * point.getX() * point.getY())),
+                point -> new Point(Math.tan(point.getX()), Math.tan(point.getY())),
+                point -> new Point(point.getX() * Math.cos(point.getY()), point.getY() * Math.sin(point.getX()))
         );
 
-        // Генерация фрактального изображения
         canvas = FractalRenderer.render(canvas, world, transformations, samples, iterations, seed);
 
-        // Сохранение изображения
         try {
             ImageUtils.save(canvas, Path.of("fractal.png"), ImageFormat.PNG);
             System.out.println("Фрактал успешно сохранён в файл fractal.png");

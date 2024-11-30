@@ -23,4 +23,3 @@ public final class ImageUtils {
         ImageIO.write(bufferedImage, format.name().toLowerCase(), filename.toFile());
     }
 }
-

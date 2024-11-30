@@ -11,7 +11,7 @@ public class FractalImage {
         this.data = new Pixel[height][width];
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
-                data[y][x] = new Pixel(0, 0, 0); // Черный цвет
+                data[y][x] = new Pixel(0, 0, 0);
             }
         }
     }

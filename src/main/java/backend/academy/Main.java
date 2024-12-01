@@ -37,7 +37,7 @@ public class Main {
 
 
         long start = System.currentTimeMillis();
-        canvas = FractalRenderer.render(canvas, world, transformations, samples, iterations, seed, 8);
+        canvas = FractalRenderer.render(canvas, world, transformations, samples, iterations, 6);
         long end = System.currentTimeMillis();
         System.out.println("Render time: " + (end - start) + " ms");
 

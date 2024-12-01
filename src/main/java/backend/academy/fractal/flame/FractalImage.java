@@ -45,7 +45,7 @@ public class FractalImage {
                     // Слияние пикселей. Здесь пример простого суммирования
                     Pixel pixel1 = this.pixel(x, y);
                     Pixel pixel2 = other.pixel(x, y);
-                    pixel1.add(pixel2); // Вам нужно определить, как объединять пиксели (например, сложением)
+                    pixel1.add(pixel2);
                 }
             }
         }

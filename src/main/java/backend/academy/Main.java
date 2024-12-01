@@ -35,7 +35,11 @@ public class Main {
                 point -> new Point(point.getX() * Math.cos(point.getY()), point.getY() * Math.sin(point.getX()))
         );
 
-        canvas = FractalRenderer.render(canvas, world, transformations, samples, iterations, seed);
+
+        long start = System.currentTimeMillis();
+        canvas = FractalRenderer.render(canvas, world, transformations, samples, iterations, seed, 8);
+        long end = System.currentTimeMillis();
+        System.out.println("Render time: " + (end - start) + " ms");
 
         try {
             ImageUtils.save(canvas, Path.of("fractal.png"), ImageFormat.PNG);

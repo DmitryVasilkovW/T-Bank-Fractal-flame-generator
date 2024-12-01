@@ -1,5 +1,6 @@
 package backend.academy.fractal.flame;
 
+
 public class FractalImage {
     private final Pixel[][] data;
     private final int width;
@@ -11,7 +12,7 @@ public class FractalImage {
         this.data = new Pixel[height][width];
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
-                data[y][x] = new Pixel(0, 0, 0);
+                data[y][x] = new Pixel(0, 0, 0);  // Инициализация пикселей
             }
         }
     }
@@ -35,6 +36,18 @@ public class FractalImage {
     public Pixel pixel(int x, int y) {
         return data[y][x];
     }
+
+    // Метод для слияния данных с другим изображением
+    public void merge(FractalImage other) {
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
+                if (this.contains(x, y) && other.contains(x, y)) {
+                    // Слияние пикселей. Здесь пример простого суммирования
+                    Pixel pixel1 = this.pixel(x, y);
+                    Pixel pixel2 = other.pixel(x, y);
+                    pixel1.add(pixel2); // Вам нужно определить, как объединять пиксели (например, сложением)
+                }
+            }
+        }
+    }
 }
-
-

@@ -37,6 +37,33 @@ public class FractalImage {
         return data[y][x];
     }
 
+    public void applyGammaCorrection(double gamma) {
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
+                Pixel pixel = data[y][x];
+                int correctedR = (int) (Math.pow(pixel.getR() / 255.0, gamma) * 255);
+                int correctedG = (int) (Math.pow(pixel.getG() / 255.0, gamma) * 255);
+                int correctedB = (int) (Math.pow(pixel.getB() / 255.0, gamma) * 255);
+                pixel.setRGB(correctedR, correctedG, correctedB);
+            }
+        }
+    }
+
+    public void applySymmetry(boolean horizontal) {
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width / 2; x++) {
+                int mirrorX = width - 1 - x;
+                int mirrorY = height - 1 - y;
+
+                if (horizontal) {
+                    data[y][mirrorX] = data[y][x]; // Горизонтальная симметрия
+                } else {
+                    data[mirrorY][x] = data[y][x]; // Вертикальная симметрия
+                }
+            }
+        }
+    }
+
     // Метод для слияния данных с другим изображением
     public void merge(FractalImage other) {
         for (int y = 0; y < height; y++) {

@@ -20,6 +20,17 @@ public class Pixel {
         return hitCount;
     }
 
+    public int getR() {
+        return r;
+    }
+
+    public int getG() {
+        return g;
+    }
+    public int getB() {
+        return b;
+    }
+
     // Установить значения RGB
     public void setRGB(int r, int g, int b) {
         this.r = r;

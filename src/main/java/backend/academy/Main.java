@@ -1,16 +1,15 @@
 package backend.academy;
 
+
 import backend.academy.fractal.flame.FractalImage;
 import backend.academy.fractal.flame.FractalRenderer;
 import backend.academy.fractal.flame.ImageFormat;
 import backend.academy.fractal.flame.ImageUtils;
-import backend.academy.fractal.flame.Point;
 import backend.academy.fractal.flame.Rect;
-import backend.academy.fractal.flame.Transformation;
 import backend.academy.fractal.flame.TransformationImpl;
-import lombok.experimental.UtilityClass;
 import java.nio.file.Path;
 import java.util.List;
+import lombok.experimental.UtilityClass;
 
 @UtilityClass
 public class Main {

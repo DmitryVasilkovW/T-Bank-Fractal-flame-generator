@@ -1,4 +1,6 @@
-package backend.academy.fractal.flame;
+package backend.academy.fractal.flame.service;
+
+import backend.academy.fractal.flame.model.Point;
 
 public class TransformationImpl implements Transformation {
     public Point apply(Point p) {

@@ -1,5 +1,7 @@
-package backend.academy.fractal.flame;
+package backend.academy.fractal.flame.service;
 
+
+import backend.academy.fractal.flame.model.Pixel;
 
 public class FractalImage {
     private final Pixel[][] data;

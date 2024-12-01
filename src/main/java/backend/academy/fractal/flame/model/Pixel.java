@@ -1,4 +1,4 @@
-package backend.academy.fractal.flame;
+package backend.academy.fractal.flame.model;
 
 public class Pixel {
     private int r, g, b, hitCount;

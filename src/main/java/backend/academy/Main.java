@@ -1,12 +1,11 @@
 package backend.academy;
 
-
-import backend.academy.fractal.flame.FractalImage;
-import backend.academy.fractal.flame.FractalRenderer;
-import backend.academy.fractal.flame.ImageFormat;
-import backend.academy.fractal.flame.ImageUtils;
-import backend.academy.fractal.flame.Rect;
-import backend.academy.fractal.flame.TransformationImpl;
+import backend.academy.fractal.flame.model.ImageFormat;
+import backend.academy.fractal.flame.model.Rect;
+import backend.academy.fractal.flame.service.FractalImage;
+import backend.academy.fractal.flame.service.FractalRenderer;
+import backend.academy.fractal.flame.service.ImageUtils;
+import backend.academy.fractal.flame.service.TransformationImpl;
 import java.nio.file.Path;
 import java.util.List;
 import lombok.experimental.UtilityClass;
@@ -25,14 +24,13 @@ public class Main {
         FractalImage canvas = FractalImage.create(width, height);
 
         var transformations = List.of(
-                TransformationImpl.custom1(),
-                TransformationImpl.custom2(),
-                TransformationImpl.spherical(),
-                TransformationImpl.custom3(),
-                TransformationImpl.tangent(),
-                TransformationImpl.custom4()
+            TransformationImpl.custom1(),
+            TransformationImpl.custom2(),
+            TransformationImpl.spherical(),
+            TransformationImpl.custom3(),
+            TransformationImpl.tangent(),
+            TransformationImpl.custom4()
         );
-
 
         long start = System.currentTimeMillis();
         canvas = FractalRenderer.render(canvas, world, transformations, samples, iterations, 6);

@@ -1,41 +1,47 @@
-package backend.academy.fractal.flame;
+package backend.academy.fractal.flame.service;
 
+import backend.academy.fractal.flame.model.Pixel;
+import backend.academy.fractal.flame.model.Point;
+import backend.academy.fractal.flame.model.Rect;
+import lombok.experimental.UtilityClass;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.concurrent.TimeUnit;
 
+@UtilityClass
 public class FractalRenderer {
 
     public static FractalImage render(
-            FractalImage canvas,
-            Rect world,
-            List<Transformation> variations,
-            int samples,
-            short iterPerSample,
-            int threads
+        FractalImage canvas,
+        Rect world,
+        List<Transformation> variations,
+        int samples,
+        short iterPerSample,
+        int threads
     ) {
         ExecutorService executor = Executors.newFixedThreadPool(threads);
         List<Callable<FractalImage>> tasks = new ArrayList<>();
 
         int samplesPerThread = samples / threads;
         for (int i = 0; i < threads; i++) {
-            tasks.add(new RenderTask(canvas.getWidth(), canvas.getHeight(), world, variations, samplesPerThread, iterPerSample));
+            tasks.add(new RenderTask(canvas.getWidth(), canvas.getHeight(), world, variations, samplesPerThread,
+                iterPerSample));
         }
 
         try {
             List<FractalImage> results = executor.invokeAll(tasks).stream()
-                    .map(future -> {
-                        try {
-                            return future.get();
-                        } catch (Exception e) {
-                            throw new RuntimeException(e);
-                        }
-                    })
-                    .toList();
+                .map(future -> {
+                    try {
+                        return future.get();
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
+                })
+                .toList();
 
             for (FractalImage result : results) {
                 canvas.merge(result);
@@ -64,7 +70,14 @@ public class FractalRenderer {
         private final int samples;
         private final short iterPerSample;
 
-        public RenderTask(int width, int height, Rect world, List<Transformation> variations, int samples, short iterPerSample) {
+        public RenderTask(
+            int width,
+            int height,
+            Rect world,
+            List<Transformation> variations,
+            int samples,
+            short iterPerSample
+        ) {
             this.width = width;
             this.height = height;
             this.world = world;

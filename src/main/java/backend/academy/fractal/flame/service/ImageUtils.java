@@ -6,12 +6,10 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.nio.file.Path;
 import javax.imageio.ImageIO;
+import lombok.experimental.UtilityClass;
 
+@UtilityClass
 public final class ImageUtils {
-
-    private ImageUtils() {
-    }
-
     public static void save(FractalImage image, Path filename, ImageFormat format) throws IOException {
         BufferedImage bufferedImage =
             new BufferedImage(image.width(), image.height(), BufferedImage.TYPE_INT_RGB);

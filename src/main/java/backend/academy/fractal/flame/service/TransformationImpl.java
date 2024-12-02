@@ -15,8 +15,8 @@ public class TransformationImpl implements Transformation {
         return new Transformation() {
             @Override
             public Point apply(Point p) {
-                double x = Math.sin(p.getX());
-                double y = Math.sin(p.getY());
+                double x = Math.sin(p.x());
+                double y = Math.sin(p.y());
                 return new Point(x, y);
             }
         };
@@ -26,9 +26,9 @@ public class TransformationImpl implements Transformation {
         return new Transformation() {
             @Override
             public Point apply(Point p) {
-                double r2 = p.getX() * p.getX() + p.getY() * p.getY();
-                double x = p.getX() / r2;
-                double y = p.getY() / r2;
+                double r2 = p.x() * p.x() + p.y() * p.y();
+                double x = p.x() / r2;
+                double y = p.y() / r2;
                 return new Point(x, y);
             }
         };
@@ -38,9 +38,9 @@ public class TransformationImpl implements Transformation {
         return new Transformation() {
             @Override
             public Point apply(Point p) {
-                double r2 = p.getX() * p.getX() + p.getY() * p.getY();
-                double x = p.getX() * Math.sin(r2) - p.getY() * Math.cos(r2);
-                double y = p.getX() * Math.cos(r2) + p.getY() * Math.sin(r2);
+                double r2 = p.x() * p.x() + p.y() * p.y();
+                double x = p.x() * Math.sin(r2) - p.y() * Math.cos(r2);
+                double y = p.x() * Math.cos(r2) + p.y() * Math.sin(r2);
                 return new Point(x, y);
             }
         };
@@ -50,9 +50,9 @@ public class TransformationImpl implements Transformation {
         return new Transformation() {
             @Override
             public Point apply(Point p) {
-                double r = Math.sqrt(p.getX() * p.getX() + p.getY() * p.getY());
-                double x = (p.getX() - p.getY()) * (p.getX() + p.getY()) / r;
-                double y = 2 * p.getX() * p.getY() / r;
+                double r = Math.sqrt(p.x() * p.x() + p.y() * p.y());
+                double x = (p.x() - p.y()) * (p.x() + p.y()) / r;
+                double y = 2 * p.x() * p.y() / r;
                 return new Point(x, y);
             }
         };
@@ -62,8 +62,8 @@ public class TransformationImpl implements Transformation {
         return new Transformation() {
             @Override
             public Point apply(Point p) {
-                double x = Math.sin(p.getX()) * p.getY();
-                double y = Math.sin(p.getY()) * p.getX();
+                double x = Math.sin(p.x()) * p.y();
+                double y = Math.sin(p.y()) * p.x();
                 return new Point(x, y);
             }
         };
@@ -73,8 +73,8 @@ public class TransformationImpl implements Transformation {
         return new Transformation() {
             @Override
             public Point apply(Point p) {
-                double x = p.getX() * Math.sin(p.getY());
-                double y = p.getY() * Math.sin(p.getX());
+                double x = p.x() * Math.sin(p.y());
+                double y = p.y() * Math.sin(p.x());
                 return new Point(x, y);
             }
         };
@@ -84,8 +84,8 @@ public class TransformationImpl implements Transformation {
         return new Transformation() {
             @Override
             public Point apply(Point p) {
-                double x = Math.sin(p.getX() * p.getX() - p.getY() * p.getY());
-                double y = Math.sin(2 * p.getX() * p.getY());
+                double x = Math.sin(p.x() * p.x() - p.y() * p.y());
+                double y = Math.sin(2 * p.x() * p.y());
                 return new Point(x, y);
             }
         };
@@ -95,8 +95,8 @@ public class TransformationImpl implements Transformation {
         return new Transformation() {
             @Override
             public Point apply(Point p) {
-                double x = Math.tan(p.getX());
-                double y = Math.tan(p.getY());
+                double x = Math.tan(p.x());
+                double y = Math.tan(p.y());
                 return new Point(x, y);
             }
         };
@@ -106,8 +106,8 @@ public class TransformationImpl implements Transformation {
         return new Transformation() {
             @Override
             public Point apply(Point p) {
-                double x = p.getX() * Math.cos(p.getY());
-                double y = p.getY() * Math.sin(p.getX());
+                double x = p.x() * Math.cos(p.y());
+                double y = p.y() * Math.sin(p.x());
                 return new Point(x, y);
             }
         };

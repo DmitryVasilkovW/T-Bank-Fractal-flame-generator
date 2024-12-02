@@ -3,7 +3,7 @@ package backend.academy;
 import backend.academy.fractal.flame.model.ImageFormat;
 import backend.academy.fractal.flame.model.Rect;
 import backend.academy.fractal.flame.service.FractalImage;
-import backend.academy.fractal.flame.service.FractalRenderer;
+import backend.academy.fractal.flame.service.render.FractalRenderer;
 import backend.academy.fractal.flame.service.ImageUtils;
 import backend.academy.fractal.flame.service.TransformationImpl;
 import java.nio.file.Path;

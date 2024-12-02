@@ -2,10 +2,14 @@ package backend.academy.fractal.flame.service;
 
 
 import backend.academy.fractal.flame.model.Pixel;
+import lombok.Getter;
 
-public class FractalImage {
+public final class FractalImage {
     private final Pixel[][] data;
+
+    @Getter
     private final int width;
+    @Getter
     private final int height;
 
     private FractalImage(int width, int height) {
@@ -14,21 +18,13 @@ public class FractalImage {
         this.data = new Pixel[height][width];
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
-                data[y][x] = new Pixel(0, 0, 0);  // Инициализация пикселей
+                data[y][x] = new Pixel(0, 0, 0);
             }
         }
     }
 
     public static FractalImage create(int width, int height) {
         return new FractalImage(width, height);
-    }
-
-    public int getWidth() {
-        return width;
-    }
-
-    public int getHeight() {
-        return height;
     }
 
     public boolean contains(int x, int y) {
@@ -43,9 +39,9 @@ public class FractalImage {
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
                 Pixel pixel = data[y][x];
-                int correctedR = (int) (Math.pow(pixel.getR() / 255.0, gamma) * 255);
-                int correctedG = (int) (Math.pow(pixel.getG() / 255.0, gamma) * 255);
-                int correctedB = (int) (Math.pow(pixel.getB() / 255.0, gamma) * 255);
+                int correctedR = (int) (Math.pow(pixel.r() / 255.0, gamma) * 255);
+                int correctedG = (int) (Math.pow(pixel.g() / 255.0, gamma) * 255);
+                int correctedB = (int) (Math.pow(pixel.b() / 255.0, gamma) * 255);
                 pixel.setRGB(correctedR, correctedG, correctedB);
             }
         }
@@ -58,20 +54,18 @@ public class FractalImage {
                 int mirrorY = height - 1 - y;
 
                 if (horizontal) {
-                    data[y][mirrorX] = data[y][x]; // Горизонтальная симметрия
+                    data[y][mirrorX] = data[y][x];
                 } else {
-                    data[mirrorY][x] = data[y][x]; // Вертикальная симметрия
+                    data[mirrorY][x] = data[y][x];
                 }
             }
         }
     }
 
-    // Метод для слияния данных с другим изображением
     public void merge(FractalImage other) {
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
                 if (this.contains(x, y) && other.contains(x, y)) {
-                    // Слияние пикселей. Здесь пример простого суммирования
                     Pixel pixel1 = this.pixel(x, y);
                     Pixel pixel2 = other.pixel(x, y);
                     pixel1.add(pixel2);

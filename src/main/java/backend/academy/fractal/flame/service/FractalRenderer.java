@@ -28,7 +28,7 @@ public class FractalRenderer {
 
         int samplesPerThread = samples / threads;
         for (int i = 0; i < threads; i++) {
-            tasks.add(new RenderTask(canvas.getWidth(), canvas.getHeight(), world, variations, samplesPerThread,
+            tasks.add(new RenderTask(canvas.width(), canvas.height(), world, variations, samplesPerThread,
                 iterPerSample));
         }
 
@@ -102,7 +102,7 @@ public class FractalRenderer {
                         int y = (int) ((pw.getY() - world.getY()) / world.getHeight() * height);
                         if (localCanvas.contains(x, y)) {
                             Pixel pixel = localCanvas.pixel(x, y);
-                            pixel.hit();
+                            pixel.incrementHitCount();
                         }
                     }
                 }

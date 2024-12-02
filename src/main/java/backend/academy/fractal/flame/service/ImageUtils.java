@@ -14,12 +14,12 @@ public final class ImageUtils {
 
     public static void save(FractalImage image, Path filename, ImageFormat format) throws IOException {
         BufferedImage bufferedImage =
-            new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_RGB);
+            new BufferedImage(image.width(), image.height(), BufferedImage.TYPE_INT_RGB);
 
-        for (int y = 0; y < image.getHeight(); y++) {
-            for (int x = 0; x < image.getWidth(); x++) {
+        for (int y = 0; y < image.height(); y++) {
+            for (int x = 0; x < image.width(); x++) {
                 Pixel pixel = image.pixel(x, y);
-                int rgb = (pixel.getHitCount() << 16) | (pixel.getHitCount() << 8) | pixel.getHitCount();
+                int rgb = (pixel.hitCount() << 16) | (pixel.hitCount() << 8) | pixel.hitCount();
                 bufferedImage.setRGB(x, y, rgb);
             }
         }

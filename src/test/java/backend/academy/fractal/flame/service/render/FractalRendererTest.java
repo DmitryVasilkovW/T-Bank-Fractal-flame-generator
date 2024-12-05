@@ -8,12 +8,11 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockedStatic;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
@@ -40,15 +39,8 @@ class FractalRendererTest {
     @Mock
     private ExecutorService executorService;
 
-    @InjectMocks
-    private RenderTask renderTask;
-
-    private List<Transformation> variations;
-
-    @BeforeEach
-    void setUp() {
-        variations = List.of(transformation);
-    }
+    @Spy
+    private List<Transformation> variations = List.of(transformation);
 
     @Test
     void testRender() throws Exception {
@@ -71,5 +63,7 @@ class FractalRendererTest {
             assertNotNull(result);
         }
     }
+
+
 }
 

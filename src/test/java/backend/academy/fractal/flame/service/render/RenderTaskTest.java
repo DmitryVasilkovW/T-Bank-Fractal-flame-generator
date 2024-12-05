@@ -22,13 +22,12 @@ class RenderTaskTest {
     private FractalImage mockImage;
     private Rect mockWorld;
     private List<Transformation> mockVariations;
-    private Transformation mockTransformation;
 
     @BeforeEach
     void setup() {
         mockImage = mock(FractalImage.class);
         mockWorld = mock(Rect.class);
-        mockTransformation = mock(Transformation.class);
+        Transformation mockTransformation = mock(Transformation.class);
         mockVariations = Collections.singletonList(mockTransformation);
 
         when(mockImage.contains(anyInt(), anyInt())).thenReturn(true);
@@ -62,12 +61,8 @@ class RenderTaskTest {
 
         FractalImage result = renderTask.call();
 
-        // Проверка вызовов
         verify(mockWorld, atLeastOnce()).contains(any(Point.class));
-        //verify(mockImage, atLeastOnce()).pixel(anyInt(), anyInt());
-        //verify(mockPixel, atLeastOnce()).incrementHitCount();
 
-        // Проверяем результат
         assertNotNull(result);
     }
 

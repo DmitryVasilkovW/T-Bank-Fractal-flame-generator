@@ -2,10 +2,10 @@ package backend.academy;
 
 import backend.academy.fractal.flame.model.ImageFormat;
 import backend.academy.fractal.flame.model.Rect;
-import backend.academy.fractal.flame.service.FractalImage;
+import backend.academy.fractal.flame.service.utils.FractalImage;
 import backend.academy.fractal.flame.service.render.FractalRenderer;
-import backend.academy.fractal.flame.service.ImageUtils;
-import backend.academy.fractal.flame.service.TransformationImpl;
+import backend.academy.fractal.flame.service.utils.ImageUtils;
+import backend.academy.fractal.flame.service.transformation.impl.TransformationImpl;
 import java.nio.file.Path;
 import java.util.List;
 import lombok.experimental.UtilityClass;

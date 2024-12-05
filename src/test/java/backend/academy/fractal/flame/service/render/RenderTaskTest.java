@@ -2,8 +2,8 @@ package backend.academy.fractal.flame.service.render;
 
 import backend.academy.fractal.flame.model.Point;
 import backend.academy.fractal.flame.model.Rect;
-import backend.academy.fractal.flame.service.FractalImage;
-import backend.academy.fractal.flame.service.Transformation;
+import backend.academy.fractal.flame.service.utils.FractalImage;
+import backend.academy.fractal.flame.service.transformation.Transformation;
 import java.util.Collections;
 import java.util.List;
 import org.junit.jupiter.api.Test;

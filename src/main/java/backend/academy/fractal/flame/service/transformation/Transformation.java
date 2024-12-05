@@ -1,4 +1,4 @@
-package backend.academy.fractal.flame.service;
+package backend.academy.fractal.flame.service.transformation;
 
 import backend.academy.fractal.flame.model.Point;
 import java.util.function.Function;

@@ -5,4 +5,3 @@ public enum ImageFormat {
     BMP,
     PNG
 }
-

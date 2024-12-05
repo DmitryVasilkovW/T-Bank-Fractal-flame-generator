@@ -20,9 +20,6 @@ import static org.mockito.Mockito.when;
 class RenderTaskTest {
 
     @Mock
-    private FractalImage mockImage;
-
-    @Mock
     private Rect mockWorld;
 
     @Mock

@@ -22,42 +22,43 @@ public class FractalRenderer {
         short iterPerSample,
         int threads
     ) {
-        ExecutorService executor = Executors.newFixedThreadPool(threads);
-        List<Callable<FractalImage>> tasks = new ArrayList<>();
+        try (ExecutorService executor = Executors.newFixedThreadPool(threads)) {
+            List<Callable<FractalImage>> tasks = new ArrayList<>();
 
-        int samplesPerThread = samples / threads;
-        for (int i = 0; i < threads; i++) {
-            tasks.add(new RenderTask(canvas.width(), canvas.height(), world, variations, samplesPerThread,
-                iterPerSample));
-        }
-
-        try {
-            List<FractalImage> results = executor.invokeAll(tasks).stream()
-                .map(future -> {
-                    try {
-                        return future.get();
-                    } catch (Exception e) {
-                        throw new RuntimeException(e);
-                    }
-                })
-                .toList();
-
-            for (FractalImage result : results) {
-                canvas.merge(result);
+            int samplesPerThread = samples / threads;
+            for (int i = 0; i < threads; i++) {
+                tasks.add(new RenderTask(canvas.width(), canvas.height(), world, variations, samplesPerThread,
+                    iterPerSample));
             }
-        } catch (InterruptedException e) {
-            throw new RuntimeException("Rendering was interrupted", e);
-        } finally {
-            executor.shutdown();
+
             try {
-                if (!executor.awaitTermination(60, TimeUnit.SECONDS)) {
-                    executor.shutdownNow();
+                List<FractalImage> results = executor.invokeAll(tasks).stream()
+                    .map(future -> {
+                        try {
+                            return future.get();
+                        } catch (Exception e) {
+                            throw new RuntimeException(e);
+                        }
+                    })
+                    .toList();
+
+                for (FractalImage result : results) {
+                    canvas.merge(result);
                 }
             } catch (InterruptedException e) {
-                executor.shutdownNow();
+                throw new RuntimeException("Rendering was interrupted", e);
+            } finally {
+                executor.shutdown();
+                try {
+                    if (!executor.awaitTermination(60, TimeUnit.SECONDS)) {
+                        executor.shutdownNow();
+                    }
+                } catch (InterruptedException e) {
+                    executor.shutdownNow();
+                }
             }
-        }
 
-        return canvas;
+            return canvas;
+        }
     }
 }

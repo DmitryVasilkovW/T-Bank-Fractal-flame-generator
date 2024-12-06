@@ -2,10 +2,15 @@ package backend.academy;
 
 import backend.academy.fractal.flame.model.ImageFormat;
 import backend.academy.fractal.flame.model.Rect;
+import backend.academy.fractal.flame.service.transformation.impl.ComplexWaveTransformationImpl;
+import backend.academy.fractal.flame.service.transformation.impl.OscillatingStretchTransformationImpl;
+import backend.academy.fractal.flame.service.transformation.impl.SinusoidalWarpTransformationImpl;
+import backend.academy.fractal.flame.service.transformation.impl.SphericalTransformationImpl;
+import backend.academy.fractal.flame.service.transformation.impl.StretchAlongXAndYTransformationImpl;
+import backend.academy.fractal.flame.service.transformation.impl.TangentWarpTransformationImpl;
 import backend.academy.fractal.flame.service.utils.FractalImage;
 import backend.academy.fractal.flame.service.render.FractalRenderer;
 import backend.academy.fractal.flame.service.utils.ImageUtils;
-import backend.academy.fractal.flame.service.transformation.impl.TransformationImpl;
 import java.nio.file.Path;
 import java.util.List;
 import lombok.experimental.UtilityClass;
@@ -24,12 +29,12 @@ public class Main {
         FractalImage canvas = FractalImage.create(width, height);
 
         var transformations = List.of(
-            TransformationImpl.custom1(),
-            TransformationImpl.custom2(),
-            TransformationImpl.spherical(),
-            TransformationImpl.custom3(),
-            TransformationImpl.tangent(),
-            TransformationImpl.custom4()
+            new StretchAlongXAndYTransformationImpl(),
+            new OscillatingStretchTransformationImpl(),
+            new SphericalTransformationImpl(),
+            new ComplexWaveTransformationImpl(),
+            new TangentWarpTransformationImpl(),
+            new SinusoidalWarpTransformationImpl()
         );
 
         long start = System.currentTimeMillis();

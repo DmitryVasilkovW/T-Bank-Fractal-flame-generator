@@ -59,7 +59,7 @@ public class TransformationImpl implements Transformation {
         };
     }
 
-    public static Transformation custom1() {
+    public static Transformation stretchAlongXAndY() {
         return new Transformation() {
             @Override
             public Point apply(Point p) {
@@ -70,7 +70,7 @@ public class TransformationImpl implements Transformation {
         };
     }
 
-    public static Transformation custom2() {
+    public static Transformation oscillatingStretch() {
         return new Transformation() {
             @Override
             public Point apply(Point p) {
@@ -81,7 +81,7 @@ public class TransformationImpl implements Transformation {
         };
     }
 
-    public static Transformation custom3() {
+    public static Transformation complexWave() {
         return new Transformation() {
             @Override
             public Point apply(Point p) {
@@ -92,7 +92,7 @@ public class TransformationImpl implements Transformation {
         };
     }
 
-    public static Transformation tangent() {
+    public static Transformation tangentWarp() {
         return new Transformation() {
             @Override
             public Point apply(Point p) {
@@ -103,7 +103,7 @@ public class TransformationImpl implements Transformation {
         };
     }
 
-    public static Transformation custom4() {
+    public static Transformation sinusoidalWarp() {
         return new Transformation() {
             @Override
             public Point apply(Point p) {

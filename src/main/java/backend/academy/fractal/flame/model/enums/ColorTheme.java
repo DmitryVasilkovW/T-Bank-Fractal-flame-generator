@@ -1,4 +1,4 @@
-package backend.academy.fractal.flame.model;
+package backend.academy.fractal.flame.model.enums;
 
 public enum ColorTheme {
     BLACK_AND_WHITE,

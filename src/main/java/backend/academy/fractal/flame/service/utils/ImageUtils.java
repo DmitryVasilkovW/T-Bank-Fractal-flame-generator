@@ -1,6 +1,6 @@
 package backend.academy.fractal.flame.service.utils;
 
-import backend.academy.fractal.flame.model.ImageFormat;
+import backend.academy.fractal.flame.model.enums.ImageFormat;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.nio.file.Files;

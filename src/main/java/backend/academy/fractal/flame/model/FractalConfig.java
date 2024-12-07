@@ -1,5 +1,6 @@
 package backend.academy.fractal.flame.model;
 
+import backend.academy.fractal.flame.model.enums.ColorTheme;
 import backend.academy.fractal.flame.service.transformation.Transformation;
 import java.util.List;
 

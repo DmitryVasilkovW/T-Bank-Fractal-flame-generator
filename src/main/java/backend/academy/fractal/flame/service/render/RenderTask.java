@@ -3,6 +3,7 @@ package backend.academy.fractal.flame.service.render;
 import backend.academy.fractal.flame.model.Pixel;
 import backend.academy.fractal.flame.model.Point;
 import backend.academy.fractal.flame.model.Rect;
+import backend.academy.fractal.flame.model.RenderTaskConfig;
 import backend.academy.fractal.flame.service.color.ColorGen;
 import backend.academy.fractal.flame.service.transformation.Transformation;
 import backend.academy.fractal.flame.service.transformation.impl.AffineTransformation;
@@ -23,23 +24,16 @@ public class RenderTask implements Callable<FractalImage> {
     private final short iterPerSample;
 
     public RenderTask(
-        int width,
-        int height,
-        Rect world,
-        List<Transformation> variations,
-        Optional<List<AffineTransformation>> affineTransformations,
-        Optional<List<ColorGen>> colors,
-        int samples,
-        short iterPerSample
+        RenderTaskConfig config
     ) {
-        this.width = width;
-        this.height = height;
-        this.world = world;
-        this.variations = variations;
-        this.affineTransformationsO = affineTransformations;
-        this.colorsO = colors;
-        this.samples = samples;
-        this.iterPerSample = iterPerSample;
+        this.width = config.width();
+        this.height = config.height();
+        this.world = config.world();
+        this.variations = config.variations();
+        this.affineTransformationsO = config.affineTransformations();
+        this.colorsO = config.colors();
+        this.samples = config.samples();
+        this.iterPerSample = config.iterPerSample();
     }
 
     @Override

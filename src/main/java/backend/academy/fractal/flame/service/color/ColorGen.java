@@ -1,6 +1,6 @@
 package backend.academy.fractal.flame.service.color;
 
-import backend.academy.fractal.flame.model.ColorTheme;
+import backend.academy.fractal.flame.model.enums.ColorTheme;
 import java.awt.Color;
 import java.util.Random;
 

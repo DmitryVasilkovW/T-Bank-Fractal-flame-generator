@@ -1,9 +1,10 @@
 package backend.academy.fractal.flame.service.render;
 
 import backend.academy.fractal.flame.model.AffineCoefficient;
-import backend.academy.fractal.flame.model.ColorTheme;
+import backend.academy.fractal.flame.model.enums.ColorTheme;
 import backend.academy.fractal.flame.model.FractalConfig;
 import backend.academy.fractal.flame.model.Rect;
+import backend.academy.fractal.flame.model.RenderTasksConfig;
 import backend.academy.fractal.flame.model.RenderingAreaConfig;
 import backend.academy.fractal.flame.service.color.ColorGen;
 import backend.academy.fractal.flame.service.transformation.Transformation;
@@ -17,7 +18,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import lombok.experimental.UtilityClass;
-import static backend.academy.fractal.flame.model.ColorTheme.BLACK_AND_WHITE;
+import static backend.academy.fractal.flame.model.enums.ColorTheme.BLACK_AND_WHITE;
 
 @UtilityClass
 public class FractalRenderer {
@@ -31,6 +32,7 @@ public class FractalRenderer {
     ) {
         ColorTheme theme = fractalConfig.colorTheme();
         int colorDiversityIndex = fractalConfig.colorDiversityIndex();
+        int degreeOfRandomnessOfFractalCreation = fractalConfig.degreeOfRandomnessOfFractalCreation();
         int samples = fractalConfig.samples();
         short iterPerSample = fractalConfig.iterPerSample();
         boolean complicateFlameShape = fractalConfig.complicateFlameShape();
@@ -38,15 +40,24 @@ public class FractalRenderer {
         FractalImage canvas = renderingAreaConfig.canvas();
         Rect world = renderingAreaConfig.world();
 
-
         ExecutorService executor = Executors.newFixedThreadPool(threads);
         Optional<List<ColorGen>> colorGensO = getOptionalColors(theme, colorDiversityIndex);
         Optional<List<AffineTransformation>> affineTransformationsO =
-            getOptionalAffineCoefficients(complicateFlameShape, colorDiversityIndex);
+            getOptionalAffineCoefficients(complicateFlameShape, degreeOfRandomnessOfFractalCreation);
+
+        var renderTasksConfig = new RenderTasksConfig(
+            canvas,
+            world,
+            variations,
+            affineTransformationsO,
+            colorGensO,
+            samples,
+            iterPerSample
+        );
 
         try {
             List<Callable<FractalImage>> tasks =
-                createRenderTasks(canvas, world, variations, affineTransformationsO, colorGensO, samples, iterPerSample,
+                createRenderTasks(renderTasksConfig,
                     threads);
             List<FractalImage> results = executeRenderTasks(executor, tasks);
 
@@ -78,17 +89,17 @@ public class FractalRenderer {
 
     private static Optional<List<AffineTransformation>> getOptionalAffineCoefficients(
         boolean complicateFlameShape,
-        int colorDiversityIndex
+        int degreeOfRandomnessOfFractalCreation
     ) {
         if (complicateFlameShape) {
-            return Optional.of(getRandomAffineCoefficients(colorDiversityIndex));
+            return Optional.of(getRandomAffineCoefficients(degreeOfRandomnessOfFractalCreation));
         }
         return Optional.empty();
     }
 
-    private static List<AffineTransformation> getRandomAffineCoefficients(int colorDiversityIndex) {
+    private static List<AffineTransformation> getRandomAffineCoefficients(int degreeOfRandomnessOfFractalCreation) {
         var transforms = new ArrayList<AffineTransformation>();
-        for (int i = 0; i < colorDiversityIndex; i++) {
+        for (int i = 0; i < degreeOfRandomnessOfFractalCreation; i++) {
             transforms.add(new AffineTransformation(AffineCoefficient.createRandomAffineCoefficient()));
         }
 
@@ -96,21 +107,13 @@ public class FractalRenderer {
     }
 
     private static List<Callable<FractalImage>> createRenderTasks(
-        FractalImage canvas,
-        Rect world,
-        List<Transformation> variations,
-        Optional<List<AffineTransformation>> affineTransformations,
-        Optional<List<ColorGen>> colors,
-        int samples,
-        short iterPerSample,
+        RenderTasksConfig renderTasksConfig,
         int threads
     ) {
         List<Callable<FractalImage>> tasks = new ArrayList<>();
-        int samplesPerThread = samples / threads;
 
         for (int i = 0; i < threads; i++) {
-            tasks.add(new RenderTask(canvas.width(), canvas.height(), world, variations, affineTransformations, colors,
-                samplesPerThread, iterPerSample));
+            tasks.add(new RenderTask(renderTasksConfig.toRenderTaskConfig(threads)));
         }
 
         return tasks;

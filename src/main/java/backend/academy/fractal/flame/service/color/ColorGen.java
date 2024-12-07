@@ -1,6 +1,6 @@
 package backend.academy.fractal.flame.service.color;
 
-import backend.academy.fractal.flame.model.ColorThemes;
+import backend.academy.fractal.flame.model.ColorTheme;
 import java.awt.Color;
 import java.util.Random;
 
@@ -10,7 +10,7 @@ public record ColorGen(
     private static final int MAX_COLOR = 256;
     private static final Random random = new Random();
 
-    public static ColorGen createRandomAffineCoefficient(ColorThemes color) {
+    public static ColorGen createRandomAffineCoefficient(ColorTheme color) {
         switch (color){
             case NEON -> {
                 return new ColorGen(

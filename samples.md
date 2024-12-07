@@ -11,6 +11,8 @@
 ![](assets/black_and_white_fractal_1.png)
 ![](assets/black_and_white_fractal_2.png)
 ![](assets/black_and_white_fractal_3.png)
+![](assets/black_and_white_fractal_4.png)
+![](assets/black_and_white_fractal_5.png)
 
 ---
 
@@ -37,3 +39,5 @@
 
 ![](assets/blue_fractal_1.png)
 ![](assets/blue_fractal_2.png)
+![](assets/blue_fractal_3.png)
+![](assets/blue_fractal_4.png)

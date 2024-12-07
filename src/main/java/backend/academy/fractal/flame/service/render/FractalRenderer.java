@@ -1,8 +1,10 @@
 package backend.academy.fractal.flame.service.render;
 
 import backend.academy.fractal.flame.model.AffineCoefficient;
-import backend.academy.fractal.flame.model.ColorThemes;
+import backend.academy.fractal.flame.model.ColorTheme;
+import backend.academy.fractal.flame.model.FractalConfig;
 import backend.academy.fractal.flame.model.Rect;
+import backend.academy.fractal.flame.model.RenderingAreaConfig;
 import backend.academy.fractal.flame.service.color.ColorGen;
 import backend.academy.fractal.flame.service.transformation.Transformation;
 import backend.academy.fractal.flame.service.transformation.impl.AffineTransformation;
@@ -15,32 +17,42 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import lombok.experimental.UtilityClass;
+import static backend.academy.fractal.flame.model.ColorTheme.BLACK_AND_WHITE;
 
 @UtilityClass
 public class FractalRenderer {
+    private static final int TIMEOUT_IN_SECONDS = 60;
+    private static final String ERROR_MESSAGE = "Rendering was interrupted";
 
     public static FractalImage render(
-        FractalImage canvas,
-        Rect world,
-        List<Transformation> variations,
-        Optional<ColorThemes> theme,
-        boolean complicateFlameShape,
-        int colorDiversityIndex,
-        int samples,
-        short iterPerSample,
+        FractalConfig fractalConfig,
+        RenderingAreaConfig renderingAreaConfig,
         int threads
     ) {
+        ColorTheme theme = fractalConfig.colorTheme();
+        int colorDiversityIndex = fractalConfig.colorDiversityIndex();
+        int samples = fractalConfig.samples();
+        short iterPerSample = fractalConfig.iterPerSample();
+        boolean complicateFlameShape = fractalConfig.complicateFlameShape();
+        List<Transformation> variations = fractalConfig.variations();
+        FractalImage canvas = renderingAreaConfig.canvas();
+        Rect world = renderingAreaConfig.world();
+
+
         ExecutorService executor = Executors.newFixedThreadPool(threads);
         Optional<List<ColorGen>> colorGensO = getOptionalColors(theme, colorDiversityIndex);
-        Optional<List<AffineTransformation>> affineTransformationsO = getOptionalAffineCoefficients(complicateFlameShape, colorDiversityIndex);
+        Optional<List<AffineTransformation>> affineTransformationsO =
+            getOptionalAffineCoefficients(complicateFlameShape, colorDiversityIndex);
 
         try {
-            List<Callable<FractalImage>> tasks = createRenderTasks(canvas, world, variations, affineTransformationsO, colorGensO, samples, iterPerSample, threads);
+            List<Callable<FractalImage>> tasks =
+                createRenderTasks(canvas, world, variations, affineTransformationsO, colorGensO, samples, iterPerSample,
+                    threads);
             List<FractalImage> results = executeRenderTasks(executor, tasks);
 
             mergeResults(canvas, results);
         } catch (InterruptedException e) {
-            throw new RuntimeException("Rendering was interrupted", e);
+            throw new RuntimeException(ERROR_MESSAGE, e);
         } finally {
             shutdownExecutor(executor);
         }
@@ -48,14 +60,14 @@ public class FractalRenderer {
         return canvas;
     }
 
-    private static Optional<List<ColorGen>> getOptionalColors(Optional<ColorThemes> theme, int colorDiversityIndex) {
-        if (theme.isPresent()) {
-            return Optional.of(getRandomColors(theme.get(), colorDiversityIndex));
+    private static Optional<List<ColorGen>> getOptionalColors(ColorTheme theme, int colorDiversityIndex) {
+        if (theme != BLACK_AND_WHITE) {
+            return Optional.of(getRandomColors(theme, colorDiversityIndex));
         }
         return Optional.empty();
     }
 
-    private static List<ColorGen> getRandomColors(ColorThemes theme, int colorDiversityIndex) {
+    private static List<ColorGen> getRandomColors(ColorTheme theme, int colorDiversityIndex) {
         var colors = new ArrayList<ColorGen>();
         for (int i = 0; i < colorDiversityIndex; i++) {
             colors.add(ColorGen.createRandomAffineCoefficient(theme));
@@ -64,7 +76,10 @@ public class FractalRenderer {
         return colors;
     }
 
-    private static Optional<List<AffineTransformation>> getOptionalAffineCoefficients(boolean complicateFlameShape, int colorDiversityIndex) {
+    private static Optional<List<AffineTransformation>> getOptionalAffineCoefficients(
+        boolean complicateFlameShape,
+        int colorDiversityIndex
+    ) {
         if (complicateFlameShape) {
             return Optional.of(getRandomAffineCoefficients(colorDiversityIndex));
         }
@@ -94,7 +109,8 @@ public class FractalRenderer {
         int samplesPerThread = samples / threads;
 
         for (int i = 0; i < threads; i++) {
-            tasks.add(new RenderTask(canvas.width(), canvas.height(), world, variations, affineTransformations, colors, samplesPerThread, iterPerSample));
+            tasks.add(new RenderTask(canvas.width(), canvas.height(), world, variations, affineTransformations, colors,
+                samplesPerThread, iterPerSample));
         }
 
         return tasks;
@@ -113,7 +129,7 @@ public class FractalRenderer {
                 })
                 .toList();
         } catch (InterruptedException e) {
-            throw new RuntimeException("Rendering was interrupted", e);
+            throw new RuntimeException(ERROR_MESSAGE, e);
         }
     }
 
@@ -126,7 +142,7 @@ public class FractalRenderer {
     private static void shutdownExecutor(ExecutorService executor) {
         executor.shutdown();
         try {
-            if (!executor.awaitTermination(60, TimeUnit.SECONDS)) {
+            if (!executor.awaitTermination(TIMEOUT_IN_SECONDS, TimeUnit.SECONDS)) {
                 executor.shutdownNow();
             }
         } catch (InterruptedException e) {

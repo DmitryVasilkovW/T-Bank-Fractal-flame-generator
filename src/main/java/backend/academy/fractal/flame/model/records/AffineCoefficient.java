@@ -1,6 +1,5 @@
-package backend.academy.fractal.flame.model;
+package backend.academy.fractal.flame.model.records;
 
-import java.awt.Color;
 import java.util.Random;
 
 public record AffineCoefficient(
@@ -11,7 +10,6 @@ public record AffineCoefficient(
     double e,
     double f
 ) {
-    private static final int MAX_COLOR = 256;
     private static final Random random = new Random();
 
     public static AffineCoefficient createRandomAffineCoefficient() {

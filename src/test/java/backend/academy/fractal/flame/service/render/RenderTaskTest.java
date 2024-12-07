@@ -1,20 +1,13 @@
 package backend.academy.fractal.flame.service.render;
 
-import backend.academy.fractal.flame.model.Point;
-import backend.academy.fractal.flame.model.Rect;
-import backend.academy.fractal.flame.service.utils.FractalImage;
+import backend.academy.fractal.flame.model.records.Rect;
 import backend.academy.fractal.flame.service.transformation.Transformation;
-import java.util.Collections;
-import java.util.List;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class RenderTaskTest {

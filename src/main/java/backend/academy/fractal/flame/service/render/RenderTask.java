@@ -1,9 +1,9 @@
 package backend.academy.fractal.flame.service.render;
 
 import backend.academy.fractal.flame.model.Pixel;
-import backend.academy.fractal.flame.model.Point;
-import backend.academy.fractal.flame.model.Rect;
-import backend.academy.fractal.flame.model.RenderTaskConfig;
+import backend.academy.fractal.flame.model.records.Point;
+import backend.academy.fractal.flame.model.records.Rect;
+import backend.academy.fractal.flame.model.records.RenderTaskConfig;
 import backend.academy.fractal.flame.service.color.ColorGen;
 import backend.academy.fractal.flame.service.transformation.Transformation;
 import backend.academy.fractal.flame.service.transformation.impl.AffineTransformation;

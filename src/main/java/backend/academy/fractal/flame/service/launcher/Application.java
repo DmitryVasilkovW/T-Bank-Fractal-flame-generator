@@ -1,9 +1,9 @@
 package backend.academy.fractal.flame.service.launcher;
 
-import backend.academy.fractal.flame.model.FractalConfig;
-import backend.academy.fractal.flame.model.Rect;
-import backend.academy.fractal.flame.model.RenderingAreaConfig;
-import backend.academy.fractal.flame.model.TransformationRequest;
+import backend.academy.fractal.flame.model.records.FractalConfig;
+import backend.academy.fractal.flame.model.records.Rect;
+import backend.academy.fractal.flame.model.records.RenderingAreaConfig;
+import backend.academy.fractal.flame.model.records.TransformationRequest;
 import backend.academy.fractal.flame.model.enums.ColorTheme;
 import backend.academy.fractal.flame.model.enums.ImageFormat;
 import backend.academy.fractal.flame.model.enums.Transformations;
@@ -24,7 +24,6 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
 import static backend.academy.fractal.flame.model.enums.ColorTheme.BLACK_AND_WHITE;
-import static backend.academy.fractal.flame.model.enums.ColorTheme.BLUE;
 
 @SpringBootApplication
 @ComponentScan(basePackages = "backend.academy.fractal.flame")

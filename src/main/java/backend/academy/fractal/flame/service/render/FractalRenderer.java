@@ -1,11 +1,11 @@
 package backend.academy.fractal.flame.service.render;
 
-import backend.academy.fractal.flame.model.AffineCoefficient;
+import backend.academy.fractal.flame.model.records.AffineCoefficient;
 import backend.academy.fractal.flame.model.enums.ColorTheme;
-import backend.academy.fractal.flame.model.FractalConfig;
-import backend.academy.fractal.flame.model.Rect;
-import backend.academy.fractal.flame.model.RenderTasksConfig;
-import backend.academy.fractal.flame.model.RenderingAreaConfig;
+import backend.academy.fractal.flame.model.records.FractalConfig;
+import backend.academy.fractal.flame.model.records.Rect;
+import backend.academy.fractal.flame.model.records.RenderTasksConfig;
+import backend.academy.fractal.flame.model.records.RenderingAreaConfig;
 import backend.academy.fractal.flame.service.color.ColorGen;
 import backend.academy.fractal.flame.service.transformation.Transformation;
 import backend.academy.fractal.flame.service.transformation.impl.AffineTransformation;

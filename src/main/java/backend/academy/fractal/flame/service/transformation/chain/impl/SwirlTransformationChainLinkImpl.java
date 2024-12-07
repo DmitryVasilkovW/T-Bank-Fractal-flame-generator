@@ -1,6 +1,6 @@
 package backend.academy.fractal.flame.service.transformation.chain.impl;
 
-import backend.academy.fractal.flame.model.TransformationRequest;
+import backend.academy.fractal.flame.model.records.TransformationRequest;
 import backend.academy.fractal.flame.service.transformation.Transformation;
 import backend.academy.fractal.flame.service.transformation.chain.TransformationChainLink;
 import backend.academy.fractal.flame.service.transformation.impl.SwirlTransformationImpl;

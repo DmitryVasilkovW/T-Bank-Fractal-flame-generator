@@ -10,13 +10,32 @@ public class GammaCorrectionProcessor implements ImageProcessor {
         this.gamma = gamma;
     }
 
-    @Override
-    public void process(FractalImage image) {
-        for (int y = 0; y < image.height(); y++) {
-            for (int x = 0; x < image.width(); x++) {
-                Pixel pixel = image.pixel(x, y);
-                int correctedValue = (int) (255 * Math.pow(pixel.hitCount() / 255.0, 1.0 / gamma));
-                pixel.setRGB(correctedValue, correctedValue, correctedValue);
+    public void process(FractalImage fractalImage) {
+        double max = 0;
+
+        for (int x = 0; x < fractalImage.data().length; x++) {
+            for (int y = 0; y < fractalImage.data()[x].length; y++) {
+                if (fractalImage.data()[x][y].hitCount() != 0) {
+                    fractalImage.data()[x][y].normal(Math.log10(fractalImage.data()[x][y].hitCount()));
+                    max = Math.max(max, fractalImage.data()[x][y].normal());
+                }
+            }
+        }
+
+        for (int x = 0; x < fractalImage.data().length; x++) {
+            for (int y = 0; y < fractalImage.data()[x].length; y++) {
+                Pixel pixel = fractalImage.data()[x][y];
+                pixel.normal(pixel.normal() / max);
+
+                int red = (int) (pixel.color().getRed() * Math.pow(pixel.normal(), 1.0 / gamma));
+                int green = (int) (pixel.color().getGreen() * Math.pow(pixel.normal(), 1.0 / gamma));
+                int blue = (int) (pixel.color().getBlue() * Math.pow(pixel.normal(), 1.0 / gamma));
+
+                pixel.setRGB(
+                    Math.min(255, Math.max(0, red)),
+                    Math.min(255, Math.max(0, green)),
+                    Math.min(255, Math.max(0, blue))
+                );
             }
         }
     }

@@ -1,18 +1,30 @@
 package backend.academy.fractal.flame.model;
 
+import java.awt.Color;
 import lombok.Getter;
+import lombok.Setter;
 
 @Getter
 public class Pixel {
-    private int r;
-    private int g;
-    private int b;
+    private Color color;
     private int hitCount = 0;
+    @Setter
+    private double normal;
 
     public Pixel(int r, int g, int b) {
-        this.r = r;
-        this.g = g;
-        this.b = b;
+        this.color = new Color(r, g, b);
+    }
+
+    public int getR() {
+        return color.getRed();
+    }
+
+    public int getG() {
+        return color.getGreen();
+    }
+
+    public int getB() {
+        return color.getBlue();
     }
 
     public void incrementHitCount() {
@@ -20,22 +32,24 @@ public class Pixel {
     }
 
     public void setRGB(int r, int g, int b) {
-        this.r = r;
-        this.g = g;
-        this.b = b;
+        this.color = new Color(r, g, b);
     }
 
     public void add(Pixel other) {
-        this.r += other.r;
-        this.g += other.g;
-        this.b += other.b;
+        int r = Math.min(255, Math.max(0, this.color.getRed() + other.color.getRed()));
+        int g = Math.min(255, Math.max(0, this.color.getGreen() + other.color.getGreen()));
+        int b = Math.min(255, Math.max(0, this.color.getBlue() + other.color.getBlue()));
+
+        color = new Color(r, g, b);
         this.hitCount += other.hitCount;
     }
 
-    public void average(Pixel other) {
-        this.r = (this.r + other.r) / 2;
-        this.g = (this.g + other.g) / 2;
-        this.b = (this.b + other.b) / 2;
-        this.hitCount += other.hitCount;
+
+    public void addAverageRGB(int r, int g, int b) {
+        int newR = (getR() + r) / 2;
+        int newG = (getG() + g) / 2;
+        int newB = (getB() + b) / 2;
+
+        setRGB(newR, newG, newB);
     }
 }

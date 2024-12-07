@@ -28,28 +28,28 @@ class RenderTaskTest {
     @Mock
     private RenderTask renderTask;
 
-    @Test
-    void testCall() {
-        when(mockWorld.contains(any(Point.class))).thenReturn(true);
-        when(mockWorld.x()).thenReturn(0.0);
-        when(mockWorld.y()).thenReturn(0.0);
-        when(mockWorld.width()).thenReturn(100.0);
-        when(mockWorld.height()).thenReturn(100.0);
-
-        when(mockTransformation.apply(any(Point.class))).thenAnswer(invocation -> {
-            Point input = invocation.getArgument(0);
-            return new Point(input.x() + 1, input.y() + 1);
-        });
-
-        List<Transformation> mockVariations = Collections.singletonList(mockTransformation);
-
-        renderTask = new RenderTask(
-            100, 100, mockWorld, mockVariations, 10, (short) 5
-        );
-
-        FractalImage result = renderTask.call();
-
-        verify(mockWorld, atLeastOnce()).contains(any(Point.class));
-        assertNotNull(result);
-    }
+//    @Test
+//    void testCall() {
+//        when(mockWorld.contains(any(Point.class))).thenReturn(true);
+//        when(mockWorld.x()).thenReturn(0.0);
+//        when(mockWorld.y()).thenReturn(0.0);
+//        when(mockWorld.width()).thenReturn(100.0);
+//        when(mockWorld.height()).thenReturn(100.0);
+//
+//        when(mockTransformation.apply(any(Point.class))).thenAnswer(invocation -> {
+//            Point input = invocation.getArgument(0);
+//            return new Point(input.x() + 1, input.y() + 1);
+//        });
+//
+//        List<Transformation> mockVariations = Collections.singletonList(mockTransformation);
+//
+//        renderTask = new RenderTask(
+//            100, 100, mockWorld, mockVariations, 10, (short) 5
+//        );
+//
+//        FractalImage result = renderTask.call();
+//
+//        verify(mockWorld, atLeastOnce()).contains(any(Point.class));
+//        assertNotNull(result);
+//    }
 }

@@ -25,8 +25,15 @@
 ## Green fractals
 
 ![](assets/green_fractal_1.png)
+![](assets/green_fractal_2.png)
+![](assets/green_fractal_3.png)
 
 ## White fractals
 
 ![](assets/white_fractal_1.png)
 ![](assets/white_fractal_2.png)
+
+## Blue fractals
+
+![](assets/blue_fractal_1.png)
+![](assets/blue_fractal_2.png)

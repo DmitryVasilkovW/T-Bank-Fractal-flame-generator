@@ -39,6 +39,24 @@ public record ColorGen(
                     )
                 );
             }
+            case AZURE -> {
+                return new ColorGen(
+                    new Color(
+                        random.nextInt(0, 100),
+                        random.nextInt(150, 255),
+                        random.nextInt(200, MAX_COLOR)
+                    )
+                );
+            }
+            case BLUE -> {
+                return new ColorGen(
+                    new Color(
+                        random.nextInt(0, 50),
+                        random.nextInt(0, 80),
+                        random.nextInt(200, MAX_COLOR)
+                    )
+                );
+            }
             default -> {
                 return new ColorGen(
                     new Color(

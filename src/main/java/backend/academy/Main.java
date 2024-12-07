@@ -9,15 +9,14 @@ import backend.academy.fractal.flame.service.transformation.impl.OscillatingStre
 import backend.academy.fractal.flame.service.transformation.impl.SinusoidalWarpTransformationImpl;
 import backend.academy.fractal.flame.service.transformation.impl.SphericalTransformationImpl;
 import backend.academy.fractal.flame.service.transformation.impl.StretchAlongXAndYTransformationImpl;
-import backend.academy.fractal.flame.service.transformation.impl.TangentWarpTransformationImpl;
 import backend.academy.fractal.flame.service.utils.FractalImage;
 import backend.academy.fractal.flame.service.utils.GammaCorrectionProcessor;
 import backend.academy.fractal.flame.service.utils.ImageUtils;
+import lombok.experimental.UtilityClass;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Optional;
-import lombok.experimental.UtilityClass;
 
 @UtilityClass
 public class Main {
@@ -34,18 +33,14 @@ public class Main {
         FractalImage canvas = FractalImage.create(width, height);
 
         var transformations = List.of(
-            new StretchAlongXAndYTransformationImpl(),
-            new OscillatingStretchTransformationImpl(),
-            new SphericalTransformationImpl(),
-            new ComplexWaveTransformationImpl(),
-            new TangentWarpTransformationImpl(),
-            new SinusoidalWarpTransformationImpl()
+            new SinusoidalWarpTransformationImpl(),
+            new SphericalTransformationImpl()
         );
 
-        Optional<ColorThemes> themeO = Optional.of(ColorThemes.PINK);
+        Optional<ColorThemes> themeO = Optional.of(ColorThemes.BLUE);
 
         long start = System.currentTimeMillis();
-        canvas = FractalRenderer.render(canvas, world, transformations, themeO, true, 4, samples, iterations, 6);
+        canvas = FractalRenderer.render(canvas, world, transformations, themeO, true, 6, samples, iterations, 6);
         long end = System.currentTimeMillis();
         System.out.println("Render time: " + (end - start) + " ms");
 

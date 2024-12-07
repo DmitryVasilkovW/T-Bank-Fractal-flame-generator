@@ -5,5 +5,7 @@ public enum ColorThemes {
     RANDOM,
     ORANGE,
     NEON,
-    PINK
+    PINK,
+    AZURE,
+    BLUE
 }

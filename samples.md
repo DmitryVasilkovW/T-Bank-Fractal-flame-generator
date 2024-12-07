@@ -43,3 +43,4 @@
 ![](assets/blue/blue_fractal_2.png)
 ![](assets/blue/blue_fractal_3.png)
 ![](assets/blue/blue_fractal_4.png)
+![](assets/blue/blue_fractal_5.png)

@@ -4,10 +4,10 @@ import backend.academy.fractal.flame.model.Pixel;
 import backend.academy.fractal.flame.model.records.Point;
 import backend.academy.fractal.flame.model.records.Rect;
 import backend.academy.fractal.flame.model.records.RenderTaskConfig;
-import backend.academy.fractal.flame.service.color.ColorGen;
 import backend.academy.fractal.flame.service.transformation.Transformation;
 import backend.academy.fractal.flame.service.transformation.impl.AffineTransformation;
 import backend.academy.fractal.flame.service.utils.FractalImage;
+import java.awt.Color;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.Callable;
@@ -19,7 +19,7 @@ public class RenderTask implements Callable<FractalImage> {
     private final Rect world;
     private final List<Transformation> variations;
     private final Optional<List<AffineTransformation>> affineTransformationsO;
-    private final Optional<List<ColorGen>> colorsO;
+    private final Optional<List<Color>> colorsO;
     private final int samples;
     private final short iterPerSample;
 
@@ -65,11 +65,11 @@ public class RenderTask implements Callable<FractalImage> {
 
     private void tryToAddColor(Pixel pixel) {
         if (colorsO.isPresent()) {
-            ColorGen color = getRandomItemFromList(colorsO.get());
+            Color color = getRandomItemFromList(colorsO.get());
 
-            int r = color.color().getRed();
-            int g = color.color().getGreen();
-            int b = color.color().getBlue();
+            int r = color.getRed();
+            int g = color.getGreen();
+            int b = color.getBlue();
 
             pixel.addAverageRGB(r, g, b);
         }

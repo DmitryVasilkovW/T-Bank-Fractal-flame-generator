@@ -1,12 +1,14 @@
 package backend.academy.fractal.flame.service.launcher;
 
+import backend.academy.fractal.flame.model.enums.ColorTheme;
+import backend.academy.fractal.flame.model.enums.ImageFormat;
+import backend.academy.fractal.flame.model.enums.Transformations;
+import backend.academy.fractal.flame.model.records.ColorRequest;
 import backend.academy.fractal.flame.model.records.FractalConfig;
 import backend.academy.fractal.flame.model.records.Rect;
 import backend.academy.fractal.flame.model.records.RenderingAreaConfig;
 import backend.academy.fractal.flame.model.records.TransformationRequest;
-import backend.academy.fractal.flame.model.enums.ColorTheme;
-import backend.academy.fractal.flame.model.enums.ImageFormat;
-import backend.academy.fractal.flame.model.enums.Transformations;
+import backend.academy.fractal.flame.service.color.chain.ColorChain;
 import backend.academy.fractal.flame.service.io.Printer;
 import backend.academy.fractal.flame.service.io.Reader;
 import backend.academy.fractal.flame.service.render.FractalRenderer;
@@ -15,6 +17,7 @@ import backend.academy.fractal.flame.service.transformation.chain.Transformation
 import backend.academy.fractal.flame.service.utils.FractalImage;
 import backend.academy.fractal.flame.service.utils.GammaCorrectionProcessor;
 import backend.academy.fractal.flame.service.utils.ImageUtils;
+import java.awt.Color;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,6 +27,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
 import static backend.academy.fractal.flame.model.enums.ColorTheme.BLACK_AND_WHITE;
+import static backend.academy.fractal.flame.model.enums.ColorTheme.RANDOM;
 
 @SpringBootApplication
 @ComponentScan(basePackages = "backend.academy.fractal.flame")
@@ -31,16 +35,19 @@ public class Application implements CommandLineRunner {
     private final Printer printer;
     private final Reader reader;
     private final TransformationChain transformationChain;
+    private final ColorChain colorChain;
 
     @Autowired
     public Application(
         Printer printer,
         Reader reader,
-        TransformationChain transformationChain
+        TransformationChain transformationChain,
+        ColorChain colorChain
     ) {
         this.printer = printer;
         this.reader = reader;
         this.transformationChain = transformationChain;
+        this.colorChain = colorChain;
     }
 
     @Override
@@ -53,16 +60,15 @@ public class Application implements CommandLineRunner {
 
         FractalImage canvas = FractalImage.create(width, height);
 
-        ColorTheme theme = BLACK_AND_WHITE;
         Rect world = getRect();
         List<Transformation> transformations = getTransformations();
+        Optional<List<Color>> colorsO = getOptionalColors();
 
         var fractalConfig = new FractalConfig(
             transformations,
-            theme,
+            colorsO,
             6,
             false,
-            6,
             iterations,
             samples
         );
@@ -78,11 +84,79 @@ public class Application implements CommandLineRunner {
         printer.println("Render time: " + (end - start) + " ms");
 
         var gc = new GammaCorrectionProcessor(1.8);
-        //gc.process(canvas);
+        gc.process(canvas);
 
-        //ImageUtils.saveColorfulImage(canvas, Path.of("fractal1.png"), ImageFormat.PNG);
-        ImageUtils.saveBlackAndWhiteImage(canvas, Path.of("fractal1.png"), ImageFormat.PNG);
+        ImageUtils.saveColorfulImage(canvas, Path.of("fractal1.png"), ImageFormat.PNG);
+        //ImageUtils.saveBlackAndWhiteImage(canvas, Path.of("fractal1.png"), ImageFormat.PNG);
         printer.println("Фрактал успешно сохранён в файл fractal.png");
+    }
+
+    private Optional<List<Color>> getOptionalColors() {
+        ColorTheme theme = getColorTheme();
+        int colorDiversityIndex = getColorDiversityIndex();
+
+        if (theme != BLACK_AND_WHITE) {
+            return Optional.of(getRandomColors(theme, colorDiversityIndex));
+        }
+        return Optional.empty();
+    }
+
+    private int getColorDiversityIndex() {
+        printer.println("input color diversity index");
+
+        while (true) {
+            String line = reader.readLineAsString();
+
+            if (line.isEmpty()) {
+                return 4;
+            }
+
+            try {
+                int colorDiversityIndex = Integer.parseInt(line);
+                if (colorDiversityIndex < 0) {
+                    throw new NumberFormatException();
+                }
+                return colorDiversityIndex;
+            } catch (NumberFormatException e) {
+                printer.println("invalid color diversity index");
+            }
+        }
+    }
+
+    private ColorTheme getColorTheme() {
+        showAllColors();
+
+        while (true) {
+            String line = reader.readLineAsString();
+
+            if (line.isEmpty()) {
+                return RANDOM;
+            }
+
+            try {
+                return ColorTheme.fromDisplayName(line);
+            } catch (IllegalArgumentException e) {
+                printer.println(e.getMessage());
+            }
+        }
+    }
+
+    private List<Color> getRandomColors(ColorTheme theme, int colorDiversityIndex) {
+        var colors = new ArrayList<Color>();
+        for (int i = 0; i < colorDiversityIndex; i++) {
+            colors.add(colorChain.getColor(new ColorRequest(theme)));
+        }
+
+        return colors;
+    }
+
+    private void showAllColors() {
+        int i = 1;
+        for (ColorTheme theme : ColorTheme.values()) {
+            printer.println(i + ") " + theme.displayName());
+            i++;
+        }
+        printer.println("\n");
     }
 
     private List<Transformation> getTransformations() {
@@ -98,7 +172,7 @@ public class Application implements CommandLineRunner {
                 } else {
                     stop = true;
                 }
-            } catch (Exception e) {
+            } catch (IllegalArgumentException e) {
                 printer.println(e.getMessage());
             }
         }
@@ -124,7 +198,7 @@ public class Application implements CommandLineRunner {
         try {
             Transformations t = Transformations.fromDisplayName(line);
             return Optional.of(transformationChain.getTransformations(new TransformationRequest(t)));
-        } catch (Exception e) {
+        } catch (IllegalArgumentException e) {
             throw new RuntimeException(e);
         }
     }

@@ -1,15 +1,14 @@
 package backend.academy.fractal.flame.service.render;
 
 import backend.academy.fractal.flame.model.records.AffineCoefficient;
-import backend.academy.fractal.flame.model.enums.ColorTheme;
 import backend.academy.fractal.flame.model.records.FractalConfig;
 import backend.academy.fractal.flame.model.records.Rect;
 import backend.academy.fractal.flame.model.records.RenderTasksConfig;
 import backend.academy.fractal.flame.model.records.RenderingAreaConfig;
-import backend.academy.fractal.flame.service.color.ColorGen;
 import backend.academy.fractal.flame.service.transformation.Transformation;
 import backend.academy.fractal.flame.service.transformation.impl.AffineTransformation;
 import backend.academy.fractal.flame.service.utils.FractalImage;
+import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -18,7 +17,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import lombok.experimental.UtilityClass;
-import static backend.academy.fractal.flame.model.enums.ColorTheme.BLACK_AND_WHITE;
 
 @UtilityClass
 public class FractalRenderer {
@@ -30,8 +28,6 @@ public class FractalRenderer {
         RenderingAreaConfig renderingAreaConfig,
         int threads
     ) {
-        ColorTheme theme = fractalConfig.colorTheme();
-        int colorDiversityIndex = fractalConfig.colorDiversityIndex();
         int degreeOfRandomnessOfFractalCreation = fractalConfig.degreeOfRandomnessOfFractalCreation();
         int samples = fractalConfig.samples();
         short iterPerSample = fractalConfig.iterPerSample();
@@ -39,9 +35,9 @@ public class FractalRenderer {
         List<Transformation> variations = fractalConfig.variations();
         FractalImage canvas = renderingAreaConfig.canvas();
         Rect world = renderingAreaConfig.world();
+        Optional<List<Color>> colorsO = fractalConfig.colors();
 
         ExecutorService executor = Executors.newFixedThreadPool(threads);
-        Optional<List<ColorGen>> colorGensO = getOptionalColors(theme, colorDiversityIndex);
         Optional<List<AffineTransformation>> affineTransformationsO =
             getOptionalAffineCoefficients(complicateFlameShape, degreeOfRandomnessOfFractalCreation);
 
@@ -50,7 +46,7 @@ public class FractalRenderer {
             world,
             variations,
             affineTransformationsO,
-            colorGensO,
+            colorsO,
             samples,
             iterPerSample
         );
@@ -69,22 +65,6 @@ public class FractalRenderer {
         }
 
         return canvas;
-    }
-
-    private static Optional<List<ColorGen>> getOptionalColors(ColorTheme theme, int colorDiversityIndex) {
-        if (theme != BLACK_AND_WHITE) {
-            return Optional.of(getRandomColors(theme, colorDiversityIndex));
-        }
-        return Optional.empty();
-    }
-
-    private static List<ColorGen> getRandomColors(ColorTheme theme, int colorDiversityIndex) {
-        var colors = new ArrayList<ColorGen>();
-        for (int i = 0; i < colorDiversityIndex; i++) {
-            colors.add(ColorGen.createRandomAffineCoefficient(theme));
-        }
-
-        return colors;
     }
 
     private static Optional<List<AffineTransformation>> getOptionalAffineCoefficients(

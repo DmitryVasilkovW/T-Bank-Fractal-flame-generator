@@ -8,9 +8,9 @@
 
 ---
 
-## First sample
-
-![](assets/black_and_white_fractal.png)
+![](assets/black_and_white_fractal_1.png)
+![](assets/black_and_white_fractal_2.png)
+![](assets/black_and_white_fractal_3.png)
 
 ---
 
@@ -18,10 +18,15 @@
 
 ---
 
-## Red fractal
+## Red fractals
 
-![](assets/red_fractal.png)
+![](assets/red_fractal_1.png)
 
-## Green fractal
+## Green fractals
 
-![](assets/green_fractal.png)
+![](assets/green_fractal_1.png)
+
+## White fractals
+
+![](assets/white_fractal_1.png)
+![](assets/white_fractal_2.png)

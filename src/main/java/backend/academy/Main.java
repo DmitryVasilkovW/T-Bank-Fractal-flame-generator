@@ -1,6 +1,6 @@
 package backend.academy;
 
-import backend.academy.fractal.flame.service.launcher.Application;
+import backend.academy.fractal.flame.service.app.Application;
 import java.io.IOException;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

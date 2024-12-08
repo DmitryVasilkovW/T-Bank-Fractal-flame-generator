@@ -1,10 +1,12 @@
 package backend.academy.fractal.flame.model;
 
 import java.awt.Color;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
+@EqualsAndHashCode
 public class Pixel {
     private static final int MAX_COLOR = 255;
 

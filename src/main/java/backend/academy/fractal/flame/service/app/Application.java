@@ -1,4 +1,4 @@
-package backend.academy.fractal.flame.service.launcher;
+package backend.academy.fractal.flame.service.app;
 
 import backend.academy.fractal.flame.model.enums.ColorTheme;
 import backend.academy.fractal.flame.model.enums.ImageFormat;
@@ -14,9 +14,9 @@ import backend.academy.fractal.flame.service.io.Reader;
 import backend.academy.fractal.flame.service.render.FractalRenderer;
 import backend.academy.fractal.flame.service.transformation.Transformation;
 import backend.academy.fractal.flame.service.transformation.chain.TransformationChain;
-import backend.academy.fractal.flame.service.utils.FractalImage;
-import backend.academy.fractal.flame.service.utils.GammaCorrectionProcessor;
-import backend.academy.fractal.flame.service.utils.ImageUtils;
+import backend.academy.fractal.flame.service.util.FractalImage;
+import backend.academy.fractal.flame.service.util.GammaCorrectionProcessor;
+import backend.academy.fractal.flame.service.util.ImageUtils;
 import java.awt.Color;
 import java.nio.file.Path;
 import java.util.ArrayList;

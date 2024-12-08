@@ -1,4 +1,4 @@
-package backend.academy.fractal.flame.service.utils;
+package backend.academy.fractal.flame.service.util;
 
 import backend.academy.fractal.flame.model.Pixel;
 import backend.academy.fractal.flame.model.enums.ImageFormat;

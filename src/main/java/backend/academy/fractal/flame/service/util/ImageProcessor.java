@@ -1,4 +1,4 @@
-package backend.academy.fractal.flame.service.utils;
+package backend.academy.fractal.flame.service.util;
 
 @FunctionalInterface
 public interface ImageProcessor {

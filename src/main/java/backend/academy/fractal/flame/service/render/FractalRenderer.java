@@ -7,7 +7,7 @@ import backend.academy.fractal.flame.model.records.RenderTasksConfig;
 import backend.academy.fractal.flame.model.records.RenderingAreaConfig;
 import backend.academy.fractal.flame.service.transformation.Transformation;
 import backend.academy.fractal.flame.service.transformation.impl.AffineTransformation;
-import backend.academy.fractal.flame.service.utils.FractalImage;
+import backend.academy.fractal.flame.service.util.FractalImage;
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;

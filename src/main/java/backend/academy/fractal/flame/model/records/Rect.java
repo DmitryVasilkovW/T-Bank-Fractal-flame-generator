@@ -7,6 +7,11 @@ public record Rect(double x, double y, double width, double height) {
         }
     }
 
+    @Override
+    public String toString() {
+        return "x=" + x + ", y=" + y + ", width=" + width + ", height=" + height;
+    }
+
     public boolean contains(Point point) {
         return point.x() >= x
             && point.x() <= x + width

@@ -14,6 +14,7 @@ import backend.academy.fractal.flame.service.io.Reader;
 import backend.academy.fractal.flame.service.render.FractalRenderer;
 import backend.academy.fractal.flame.service.transformation.Transformation;
 import backend.academy.fractal.flame.service.transformation.chain.TransformationChain;
+import backend.academy.fractal.flame.service.transformation.impl.LinearTransformationImpl;
 import backend.academy.fractal.flame.service.util.FractalImage;
 import backend.academy.fractal.flame.service.util.GammaCorrectionProcessor;
 import backend.academy.fractal.flame.service.util.ImageUtils;
@@ -44,25 +45,29 @@ public class Application implements CommandLineRunner {
     private static final Rect DEFAULT_RECT = new Rect(-4, -3, 8, 6);
     private static final int DEFAULT_COLOR_DIVERSITY_INDEX = 4;
 
-    private static final String PROMPT_WIDTH = "Input width";
-    private static final String PROMPT_HEIGHT = "Input height";
-    private static final String PROMPT_SAMPLES = "Input samples";
-    private static final String PROMPT_ITERATIONS = "Input iterations";
-    private static final String PROMPT_THREADS = "Input threads";
-    private static final String PROMPT_RANDOMNESS = "Input degree of fractal creation";
-    private static final String PROMPT_GAMMA = "Input gamma";
-    private static final String PROMPT_COMPLEX_SHAPE = "Is it necessary to make a fractal with a more complex shape?";
-    private static final String PROMPT_GAMMA_CORRECTION = "If gamma correction is necessary?";
-    private static final String PROMPT_SYMMETRY = "If symmetry is necessary?";
-    private static final String PROMPT_HORIZONTAL_SYMMETRY = "Need horizontal symmetry?";
-    private static final String PROMPT_IMAGE_PATH = "Input path";
-    private static final String PROMPT_COLOR_DIVERSITY_INDEX = "Input color diversity index";
-    private static final String PROMPT_RENDERING_AREA = "Input rendering area (format: x y width height):";
-    private static final String PROMPT_TRANSFORMATION = "Enter a transformation (or leave empty to finish):";
-    private static final String PROMPT_COLORS = "Enter a color (or leave empty to finish):";
+    private static final String PROMPT_WIDTH = "Input width or get default";
+    private static final String PROMPT_HEIGHT = "Input height or get default";
+    private static final String PROMPT_SAMPLES = "Input samples or get default";
+    private static final String PROMPT_ITERATIONS = "Input iterations or get default";
+    private static final String PROMPT_THREADS = "Input threads or get default";
+    private static final String PROMPT_RANDOMNESS = "Input degree of fractal creation or get default";
+    private static final String PROMPT_GAMMA = "Input gamma or get default";
+    private static final String PROMPT_COMPLEX_SHAPE = "Is it necessary to make a fractal"
+        + " with a more complex shape? Default is \"yes\"";
+    private static final String PROMPT_GAMMA_CORRECTION = "If gamma correction is necessary? Default is \"yes\"";
+    private static final String PROMPT_SYMMETRY = "If symmetry is necessary? Default is \"yes\"";
+    private static final String PROMPT_HORIZONTAL_SYMMETRY = "Need horizontal symmetry? Default is \"yes\"";
+    private static final String PROMPT_IMAGE_PATH = "Input path or get default";
+    private static final String PROMPT_COLOR_DIVERSITY_INDEX =
+        "Input color diversity index or get default";
+    private static final String PROMPT_RENDERING_AREA =
+        "Input rendering area (format: x y width height) or get default";
+    private static final String PROMPT_TRANSFORMATION =
+        "Enter a transformation (or leave empty to finish): \n Default is Linear";
     private static final String PROMPT_YES_NO = "Enter yes or no";
-    private static final String PROMPT_AVAILABLE_COLORS = "Available color themes:";
+    private static final String PROMPT_AVAILABLE_COLORS = "Available color themes (default is random):";
     private static final String PROMPT_AVAILABLE_TRANSFORMATIONS = "Available transformations:";
+    private static final String PROMPT_WAIT = "Wait for your fractal to be created and saved to ";
 
     private static final String ERROR_INCORRECT_INPUT = "Incorrect input";
     private static final String ERROR_INVALID_COLOR_DIVERSITY = "Invalid color diversity index";
@@ -82,9 +87,24 @@ public class Application implements CommandLineRunner {
     private final Reader reader;
     private final TransformationChain transformationChain;
     private final ColorChain colorChain;
+
     private String path;
     private ImageFormat imageFormat;
     private ColorTheme theme;
+    private double gamma;
+    private int width;
+    private int height;
+    private int samples;
+    private int iterations;
+    private int threads;
+    private boolean isGammaCorrectionNecessary;
+    private int degreeOfRandomnessOfFractalCreation;
+    private boolean complicateFlameShape;
+    private boolean isSymmetryNecessary;
+    private boolean horizontal;
+    private Rect world;
+    private List<Transformation> transformations;
+    private Optional<List<Color>> colorsO;
 
     @Autowired
     public Application(
@@ -101,25 +121,8 @@ public class Application implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
-        int width = getPositiveNumInput(PROMPT_WIDTH, DEFAULT_WIDTH);
-        int height = getPositiveNumInput(PROMPT_HEIGHT, DEFAULT_HEIGHT);
-        int samples = getPositiveNumInput(PROMPT_SAMPLES, DEFAULT_SAMPLES);
-        int iterations = getPositiveNumInput(PROMPT_ITERATIONS, DEFAULT_ITERATIONS);
-        int threads = getPositiveNumInput(PROMPT_THREADS, DEFAULT_THREADS);
-        int degreeOfRandomnessOfFractalCreation = getPositiveNumInput(
-            PROMPT_RANDOMNESS, DEFAULT_RANDOMNESS_DEGREE);
-        double gamma = getPositiveNumInput(PROMPT_GAMMA, DEFAULT_GAMMA);
-        boolean complicateFlameShape = getBoolInput(PROMPT_COMPLEX_SHAPE);
-        boolean isGammaCorrectionNecessary = getBoolInput(PROMPT_GAMMA_CORRECTION);
-        boolean isSymmetryNecessary = getBoolInput(PROMPT_SYMMETRY);
-        boolean horizontal = getBoolInput(PROMPT_HORIZONTAL_SYMMETRY);
-
+        getUserInput();
         FractalImage canvas = FractalImage.create(width, height);
-
-        Rect world = getRect();
-        List<Transformation> transformations = getTransformations();
-        Optional<List<Color>> colorsO = getOptionalColors();
-        parseImagePath();
 
         var fractalConfig = new FractalConfig(
             transformations,
@@ -135,31 +138,68 @@ public class Application implements CommandLineRunner {
             world
         );
 
+        FractalImage fractalImage = getFractal(fractalConfig, renderingArea);
+        saveFractal(fractalImage);
+
+        printer.println(String.format(SUCCESS_SAVE_IMAGE, path));
+    }
+
+    private void saveFractal(FractalImage fractal) {
+        if (theme.equals(BLACK_AND_WHITE)) {
+            ImageUtils.saveBlackAndWhiteImage(fractal, Path.of(path), imageFormat);
+        } else {
+            ImageUtils.saveColorfulImage(fractal, Path.of(path), imageFormat);
+        }
+    }
+
+    private FractalImage getFractal(
+        FractalConfig fractalConfig,
+        RenderingAreaConfig renderingArea
+    ) {
         long start = System.currentTimeMillis();
-        canvas = FractalRenderer.render(fractalConfig, renderingArea, threads);
+        printer.println(PROMPT_WAIT + path);
+
+        FractalImage fractalImage = FractalRenderer.render(fractalConfig, renderingArea, threads);
+
         long end = System.currentTimeMillis();
         printer.println(String.format(SUCCESS_RENDER_TIME, (end - start)));
 
         if (isGammaCorrectionNecessary) {
             var gc = new GammaCorrectionProcessor(gamma);
-            gc.process(canvas);
+            gc.process(fractalImage);
         }
 
         if (isSymmetryNecessary) {
-            canvas.applySymmetry(horizontal);
+            fractalImage.applySymmetry(horizontal);
         }
 
-        if (theme.equals(BLACK_AND_WHITE)) {
-            ImageUtils.saveBlackAndWhiteImage(canvas, Path.of(path), imageFormat);
-        } else {
-            ImageUtils.saveColorfulImage(canvas, Path.of(path), imageFormat);
-        }
+        return fractalImage;
+    }
 
-        printer.println(String.format(SUCCESS_SAVE_IMAGE, path));
+    private void getUserInput() {
+        width = getPositiveNumInput(PROMPT_WIDTH, DEFAULT_WIDTH);
+        height = getPositiveNumInput(PROMPT_HEIGHT, DEFAULT_HEIGHT);
+        samples = getPositiveNumInput(PROMPT_SAMPLES, DEFAULT_SAMPLES);
+        iterations = getPositiveNumInput(PROMPT_ITERATIONS, DEFAULT_ITERATIONS);
+        threads = getPositiveNumInput(PROMPT_THREADS, DEFAULT_THREADS);
+        isGammaCorrectionNecessary = getBoolInput(PROMPT_GAMMA_CORRECTION);
+        if (isGammaCorrectionNecessary) {
+            gamma = getPositiveNumInput(PROMPT_GAMMA, DEFAULT_GAMMA);
+        }
+        degreeOfRandomnessOfFractalCreation = getPositiveNumInput(
+            PROMPT_RANDOMNESS, DEFAULT_RANDOMNESS_DEGREE);
+        complicateFlameShape = getBoolInput(PROMPT_COMPLEX_SHAPE);
+        isSymmetryNecessary = getBoolInput(PROMPT_SYMMETRY);
+        horizontal = getBoolInput(PROMPT_HORIZONTAL_SYMMETRY);
+
+        world = getRect();
+        transformations = getTransformations();
+        colorsO = getOptionalColors();
+        parseImagePath();
     }
 
     private void parseImagePath() {
-        printer.println(PROMPT_IMAGE_PATH);
+        printer.println(PROMPT_IMAGE_PATH + " (" + DEFAULT_PATH + ")");
         String filePath = reader.readLineAsString();
 
         if (filePath == null || filePath.isEmpty()) {
@@ -203,7 +243,7 @@ public class Application implements CommandLineRunner {
     }
 
     private <T extends Number> T getPositiveNumInput(String message, T defaultSize) {
-        printer.println(message);
+        printer.println(message + " (" + defaultSize + ")");
 
         while (true) {
             try {
@@ -233,7 +273,7 @@ public class Application implements CommandLineRunner {
     }
 
     private int getColorDiversityIndex() {
-        printer.println(PROMPT_COLOR_DIVERSITY_INDEX);
+        printer.println(PROMPT_COLOR_DIVERSITY_INDEX + " (" + DEFAULT_COLOR_DIVERSITY_INDEX + ")");
 
         while (true) {
             String line = reader.readLineAsString();
@@ -255,7 +295,6 @@ public class Application implements CommandLineRunner {
     }
 
     private ColorTheme getColorTheme() {
-        printer.println(PROMPT_COLORS);
         printer.println(PROMPT_AVAILABLE_COLORS);
         showAllColors();
 
@@ -293,7 +332,7 @@ public class Application implements CommandLineRunner {
     }
 
     private List<Transformation> getTransformations() {
-        var transformations = new ArrayList<Transformation>();
+        var inputTransformations = new ArrayList<Transformation>();
         printer.println(PROMPT_TRANSFORMATION);
         printer.println(PROMPT_AVAILABLE_TRANSFORMATIONS);
         showAllTransformations();
@@ -303,8 +342,11 @@ public class Application implements CommandLineRunner {
             try {
                 Optional<Transformation> transformationO = tryTogetTransformationOptional();
                 if (transformationO.isPresent()) {
-                    transformations.add(transformationO.get());
+                    inputTransformations.add(transformationO.get());
                 } else {
+                    if (inputTransformations.isEmpty()) {
+                        inputTransformations.add(new LinearTransformationImpl());
+                    }
                     stop = true;
                 }
             } catch (IllegalArgumentException e) {
@@ -312,7 +354,7 @@ public class Application implements CommandLineRunner {
             }
         }
 
-        return transformations;
+        return inputTransformations;
     }
 
     private void showAllTransformations() {
@@ -339,7 +381,7 @@ public class Application implements CommandLineRunner {
     }
 
     private Rect getRect() {
-        printer.println(PROMPT_RENDERING_AREA);
+        printer.println(PROMPT_RENDERING_AREA + " (" + DEFAULT_RECT.toString() + ")");
         Optional<Rect> rectO = Optional.empty();
         while (rectO.isEmpty()) {
             String rectParams = reader.readLineAsString();

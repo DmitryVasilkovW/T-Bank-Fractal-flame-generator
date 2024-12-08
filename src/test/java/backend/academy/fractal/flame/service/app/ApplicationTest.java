@@ -67,10 +67,13 @@ class ApplicationTest {
             .thenReturn("4")
             .thenReturn("6")
             .thenReturn("1.8")
-            .thenReturn("n")
-            .thenReturn("n")
-            .thenReturn("n")
-            .thenReturn("n")
+            .thenReturn("y")
+            .thenReturn("y")
+            .thenReturn("y")
+            .thenReturn("y")
+            .thenReturn("")
+            .thenReturn("LINEAR")
+            .thenReturn("")
             .thenReturn("");
 
         when(colorChain.getColor(any())).thenReturn(Color.RED);

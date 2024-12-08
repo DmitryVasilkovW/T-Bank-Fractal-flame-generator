@@ -31,11 +31,13 @@
 ![](assets/green/green_fractal_1.png)
 ![](assets/green/green_fractal_2.png)
 ![](assets/green/green_fractal_3.png)
+![](assets/green/green_fractal_4.png)
 
 ## White fractals
 
 ![](assets/white/white_fractal_1.png)
 ![](assets/white/white_fractal_2.png)
+![](assets/white/white_fractal_3.png)
 
 ## Blue fractals
 
@@ -44,3 +46,4 @@
 ![](assets/blue/blue_fractal_3.png)
 ![](assets/blue/blue_fractal_4.png)
 ![](assets/blue/blue_fractal_5.png)
+![](assets/blue/blue_fractal_6.png)

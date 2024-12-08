@@ -52,11 +52,17 @@ public class Application implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        int width = 1920;
-        int height = 1080;
-        int samples = 10_000_000;
-        short iterations = 200;
-        long seed = System.currentTimeMillis();
+        int width = getPositiveNumInput("Input width", 1920);
+        int height = getPositiveNumInput("Input height", 1080);
+        int samples = getPositiveNumInput("Input samples", 10_000_000);
+        int iterations = getPositiveNumInput("Input iterations",200);
+        int threads = getPositiveNumInput("Input threads", 6);
+        int degreeOfRandomnessOfFractalCreation = getPositiveNumInput("Input degree of fractal creation", 6);
+        double gamma = getPositiveNumInput("Input gamma", 1.8);
+        boolean complicateFlameShape = getBoolInput("Is it necessary to make a fractal with a more complex shape?");
+        boolean isGammaCorrectionNecessary = getBoolInput("If gamma correction is necessary?");
+        boolean isSymmetryNecessary = getBoolInput("if symmetry is necessary?");
+        boolean horizontal = getBoolInput("Need horizontal symmetry?");
 
         FractalImage canvas = FractalImage.create(width, height);
 
@@ -67,8 +73,8 @@ public class Application implements CommandLineRunner {
         var fractalConfig = new FractalConfig(
             transformations,
             colorsO,
-            6,
-            false,
+            degreeOfRandomnessOfFractalCreation,
+            complicateFlameShape,
             iterations,
             samples
         );
@@ -79,16 +85,63 @@ public class Application implements CommandLineRunner {
         );
 
         long start = System.currentTimeMillis();
-        canvas = FractalRenderer.render(fractalConfig, renderingArea, 6);
+        canvas = FractalRenderer.render(fractalConfig, renderingArea, threads);
         long end = System.currentTimeMillis();
         printer.println("Render time: " + (end - start) + " ms");
 
-        var gc = new GammaCorrectionProcessor(1.8);
-        gc.process(canvas);
+        if (isGammaCorrectionNecessary) {
+            var gc = new GammaCorrectionProcessor(gamma);
+            gc.process(canvas);
+        }
+
+        if (isSymmetryNecessary) {
+            canvas.applySymmetry(horizontal);
+        }
 
         ImageUtils.saveColorfulImage(canvas, Path.of("fractal1.png"), ImageFormat.PNG);
         //ImageUtils.saveBlackAndWhiteImage(canvas, Path.of("fractal1.png"), ImageFormat.PNG);
         printer.println("Фрактал успешно сохранён в файл fractal.png");
+    }
+
+    private boolean getBoolInput(String message) {
+        printer.println(message);
+        printer.println("(This will slow the process down a bit)");
+        printer.println("enter yes or no");
+
+        while (true) {
+            String line = reader.readLineAsString().toLowerCase();
+
+            if (line.isEmpty()
+                || line.equalsIgnoreCase("yes")
+                || line.equalsIgnoreCase("y")) {
+                return true;
+            } else if (line.equalsIgnoreCase("no")
+                || line.equalsIgnoreCase("n")) {
+                return false;
+            }
+
+            printer.println("incorrect input");
+        }
+    }
+
+    private <T extends Number> T getPositiveNumInput(String message, T defaultSize) {
+        printer.println(message);
+
+        while (true) {
+            try {
+                String line = reader.readLineAsString();
+                if (line.isEmpty()) {
+                    return defaultSize;
+                }
+
+                int size = Integer.parseInt(line);
+                if (size < 0) {
+                    throw new NumberFormatException();
+                }
+            } catch (NumberFormatException e) {
+                printer.println("incorrect input");
+            }
+        }
     }
 
     private Optional<List<Color>> getOptionalColors() {

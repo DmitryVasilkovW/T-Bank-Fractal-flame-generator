@@ -47,7 +47,12 @@ public final class ImageUtils {
             }
         }
         try {
-            ImageIO.write(bufferedImage, format.name().toLowerCase(), filename.toFile());
+            var outputStream = Files.newOutputStream(
+                filename,
+                StandardOpenOption.CREATE,
+                StandardOpenOption.TRUNCATE_EXISTING
+            );
+            ImageIO.write(bufferedImage, format.name().toLowerCase(), outputStream);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

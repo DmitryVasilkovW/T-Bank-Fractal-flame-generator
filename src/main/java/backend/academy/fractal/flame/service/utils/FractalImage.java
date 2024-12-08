@@ -36,18 +36,6 @@ public final class FractalImage {
         return data[y][x];
     }
 
-    public void applyGammaCorrection(double gamma) {
-        for (int y = 0; y < height; y++) {
-            for (int x = 0; x < width; x++) {
-                Pixel pixel = data[y][x];
-                int correctedR = (int) (Math.pow(pixel.getR() / 255.0, gamma) * 255);
-                int correctedG = (int) (Math.pow(pixel.getG() / 255.0, gamma) * 255);
-                int correctedB = (int) (Math.pow(pixel.getB() / 255.0, gamma) * 255);
-                pixel.setRGB(correctedR, correctedG, correctedB);
-            }
-        }
-    }
-
     public void applySymmetry(boolean horizontal) {
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width / 2; x++) {

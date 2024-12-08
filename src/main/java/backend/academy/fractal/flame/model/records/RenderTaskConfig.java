@@ -14,6 +14,6 @@ public record RenderTaskConfig(
     Optional<List<AffineTransformation>> affineTransformations,
     Optional<List<Color>> colors,
     int samples,
-    short iterPerSample
+    int iterPerSample
 ) {
 }

@@ -21,7 +21,7 @@ public class RenderTask implements Callable<FractalImage> {
     private final Optional<List<AffineTransformation>> affineTransformationsO;
     private final Optional<List<Color>> colorsO;
     private final int samples;
-    private final short iterPerSample;
+    private final int iterPerSample;
 
     public RenderTask(
         RenderTaskConfig config

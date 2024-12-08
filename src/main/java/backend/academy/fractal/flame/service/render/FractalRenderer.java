@@ -30,7 +30,7 @@ public class FractalRenderer {
     ) {
         int degreeOfRandomnessOfFractalCreation = fractalConfig.degreeOfRandomnessOfFractalCreation();
         int samples = fractalConfig.samples();
-        short iterPerSample = fractalConfig.iterPerSample();
+        int iterPerSample = fractalConfig.iterPerSample();
         boolean complicateFlameShape = fractalConfig.complicateFlameShape();
         List<Transformation> variations = fractalConfig.variations();
         FractalImage canvas = renderingAreaConfig.canvas();

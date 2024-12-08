@@ -10,7 +10,7 @@ public record FractalConfig(
     Optional<List<Color>> colors,
     int degreeOfRandomnessOfFractalCreation,
     boolean complicateFlameShape,
-    short iterPerSample,
+    int iterPerSample,
     int samples
 ) {
 }

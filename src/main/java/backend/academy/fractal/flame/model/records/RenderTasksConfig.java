@@ -14,7 +14,7 @@ public record RenderTasksConfig(
     Optional<List<AffineTransformation>> affineTransformations,
     Optional<List<Color>> colors,
     int samples,
-    short iterPerSample
+    int iterPerSample
 ) {
     public RenderTaskConfig toRenderTaskConfig(int count) {
         int samplesPerThread = samples / count;

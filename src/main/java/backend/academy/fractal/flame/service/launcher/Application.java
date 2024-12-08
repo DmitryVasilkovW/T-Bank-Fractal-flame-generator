@@ -36,6 +36,9 @@ public class Application implements CommandLineRunner {
     private final Reader reader;
     private final TransformationChain transformationChain;
     private final ColorChain colorChain;
+    private String path;
+    private ImageFormat imageFormat;
+    private ColorTheme theme;
 
     @Autowired
     public Application(
@@ -51,11 +54,11 @@ public class Application implements CommandLineRunner {
     }
 
     @Override
-    public void run(String... args) throws Exception {
+    public void run(String... args) {
         int width = getPositiveNumInput("Input width", 1920);
         int height = getPositiveNumInput("Input height", 1080);
         int samples = getPositiveNumInput("Input samples", 10_000_000);
-        int iterations = getPositiveNumInput("Input iterations",200);
+        int iterations = getPositiveNumInput("Input iterations", 200);
         int threads = getPositiveNumInput("Input threads", 6);
         int degreeOfRandomnessOfFractalCreation = getPositiveNumInput("Input degree of fractal creation", 6);
         double gamma = getPositiveNumInput("Input gamma", 1.8);
@@ -69,6 +72,7 @@ public class Application implements CommandLineRunner {
         Rect world = getRect();
         List<Transformation> transformations = getTransformations();
         Optional<List<Color>> colorsO = getOptionalColors();
+        parseImagePath();
 
         var fractalConfig = new FractalConfig(
             transformations,
@@ -98,9 +102,37 @@ public class Application implements CommandLineRunner {
             canvas.applySymmetry(horizontal);
         }
 
-        ImageUtils.saveColorfulImage(canvas, Path.of("fractal1.png"), ImageFormat.PNG);
-        //ImageUtils.saveBlackAndWhiteImage(canvas, Path.of("fractal1.png"), ImageFormat.PNG);
-        printer.println("Фрактал успешно сохранён в файл fractal.png");
+        if (theme.equals(BLACK_AND_WHITE)) {
+            ImageUtils.saveBlackAndWhiteImage(canvas, Path.of(path), imageFormat);
+        } else {
+            ImageUtils.saveColorfulImage(canvas, Path.of(path), imageFormat);
+        }
+
+        printer.println("The fractal has been successfully saved to "  + path);
+    }
+
+    private void parseImagePath() {
+        printer.println("input path");
+        String filePath = reader.readLineAsString();
+
+        if (filePath == null || filePath.isEmpty()) {
+            path = "fractal.png";
+            imageFormat = ImageFormat.PNG;
+            return;
+        }
+
+        int dotIndex = filePath.lastIndexOf(".");
+        if (dotIndex == -1 || dotIndex == filePath.length() - 1) {
+            throw new IllegalArgumentException("Incorrect file format. No extension.");
+        }
+
+        String extension = filePath.substring(dotIndex + 1).toUpperCase();
+        try {
+            imageFormat = ImageFormat.valueOf(extension);
+            path = filePath;
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("Image format '" + extension + "' unsupported.", e);
+        }
     }
 
     private boolean getBoolInput(String message) {
@@ -145,11 +177,11 @@ public class Application implements CommandLineRunner {
     }
 
     private Optional<List<Color>> getOptionalColors() {
-        ColorTheme theme = getColorTheme();
+        theme = getColorTheme();
         int colorDiversityIndex = getColorDiversityIndex();
 
         if (theme != BLACK_AND_WHITE) {
-            return Optional.of(getRandomColors(theme, colorDiversityIndex));
+            return Optional.of(getRandomColors(colorDiversityIndex));
         }
         return Optional.empty();
     }
@@ -194,7 +226,7 @@ public class Application implements CommandLineRunner {
         }
     }
 
-    private List<Color> getRandomColors(ColorTheme theme, int colorDiversityIndex) {
+    private List<Color> getRandomColors(int colorDiversityIndex) {
         var colors = new ArrayList<Color>();
         for (int i = 0; i < colorDiversityIndex; i++) {
             colors.add(colorChain.getColor(new ColorRequest(theme)));
@@ -205,8 +237,8 @@ public class Application implements CommandLineRunner {
 
     private void showAllColors() {
         int i = 1;
-        for (ColorTheme theme : ColorTheme.values()) {
-            printer.println(i + ") " + theme.displayName());
+        for (ColorTheme colorTheme : ColorTheme.values()) {
+            printer.println(i + ") " + colorTheme.displayName());
             i++;
         }
         printer.println("\n");

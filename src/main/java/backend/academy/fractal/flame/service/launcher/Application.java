@@ -32,6 +32,18 @@ import static backend.academy.fractal.flame.model.enums.ColorTheme.RANDOM;
 @SpringBootApplication
 @ComponentScan(basePackages = "backend.academy.fractal.flame")
 public class Application implements CommandLineRunner {
+    private static final int DEFAULT_WIDTH = 1920;
+    private static final int DEFAULT_HEIGHT = 1080;
+    private static final int DEFAULT_SAMPLES = 10_000_000;
+    private static final int DEFAULT_ITERATIONS = 200;
+    private static final int DEFAULT_THREADS = 6;
+    private static final int DEFAULT_RANDOMNESS_DEGREE = 6;
+    private static final double DEFAULT_GAMMA = 1.8;
+    private static final String DEFAULT_PATH = "fractal.png";
+    private static final ImageFormat DEFAULT_IMAGE_FORMAT = ImageFormat.PNG;
+    private static final Rect DEFAULT_RECT = new Rect(-4, -3, 8, 6);
+    private static final int DEFAULT_COLOR_DIVERSITY_INDEX = 4;
+
     private final Printer printer;
     private final Reader reader;
     private final TransformationChain transformationChain;
@@ -55,13 +67,14 @@ public class Application implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
-        int width = getPositiveNumInput("Input width", 1920);
-        int height = getPositiveNumInput("Input height", 1080);
-        int samples = getPositiveNumInput("Input samples", 10_000_000);
-        int iterations = getPositiveNumInput("Input iterations", 200);
-        int threads = getPositiveNumInput("Input threads", 6);
-        int degreeOfRandomnessOfFractalCreation = getPositiveNumInput("Input degree of fractal creation", 6);
-        double gamma = getPositiveNumInput("Input gamma", 1.8);
+        int width = getPositiveNumInput("Input width", DEFAULT_WIDTH);
+        int height = getPositiveNumInput("Input height", DEFAULT_HEIGHT);
+        int samples = getPositiveNumInput("Input samples", DEFAULT_SAMPLES);
+        int iterations = getPositiveNumInput("Input iterations", DEFAULT_ITERATIONS);
+        int threads = getPositiveNumInput("Input threads", DEFAULT_THREADS);
+        int degreeOfRandomnessOfFractalCreation = getPositiveNumInput(
+            "Input degree of fractal creation", DEFAULT_RANDOMNESS_DEGREE);
+        double gamma = getPositiveNumInput("Input gamma", DEFAULT_GAMMA);
         boolean complicateFlameShape = getBoolInput("Is it necessary to make a fractal with a more complex shape?");
         boolean isGammaCorrectionNecessary = getBoolInput("If gamma correction is necessary?");
         boolean isSymmetryNecessary = getBoolInput("if symmetry is necessary?");
@@ -116,8 +129,8 @@ public class Application implements CommandLineRunner {
         String filePath = reader.readLineAsString();
 
         if (filePath == null || filePath.isEmpty()) {
-            path = "fractal.png";
-            imageFormat = ImageFormat.PNG;
+            path = DEFAULT_PATH;
+            imageFormat = DEFAULT_IMAGE_FORMAT;
             return;
         }
 
@@ -193,7 +206,7 @@ public class Application implements CommandLineRunner {
             String line = reader.readLineAsString();
 
             if (line.isEmpty()) {
-                return 4;
+                return DEFAULT_COLOR_DIVERSITY_INDEX;
             }
 
             try {
@@ -300,7 +313,7 @@ public class Application implements CommandLineRunner {
 
     private Optional<Rect> tryToGetOptionalRect(String rectParams) {
         if (rectParams.isEmpty()) {
-            return Optional.of(new Rect(-4, -3, 8, 6));
+            return Optional.of(DEFAULT_RECT);
         }
 
         String[] parts = rectParams.trim().split("\\s+");

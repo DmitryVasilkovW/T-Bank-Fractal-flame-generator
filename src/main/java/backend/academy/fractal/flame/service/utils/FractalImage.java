@@ -4,13 +4,10 @@ package backend.academy.fractal.flame.service.utils;
 import backend.academy.fractal.flame.model.Pixel;
 import lombok.Getter;
 
+@Getter
 public final class FractalImage {
-    @Getter
     private final Pixel[][] data;
-
-    @Getter
     private final int width;
-    @Getter
     private final int height;
 
     private FractalImage(int width, int height) {

@@ -1,5 +1,6 @@
 package backend.academy.fractal.flame.service.utils;
 
+import backend.academy.fractal.flame.model.Pixel;
 import backend.academy.fractal.flame.model.enums.ImageFormat;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -7,11 +8,13 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import javax.imageio.ImageIO;
-import backend.academy.fractal.flame.model.Pixel;
 import lombok.experimental.UtilityClass;
 
 @UtilityClass
 public final class ImageUtils {
+    private final static int HEXADECIMAL_BIT_SHIFT = 16;
+    private final static int EIGHT_BIT_SHIFT = 8;
+
     public static void saveColorfulImage(FractalImage fractalImage, Path filename, ImageFormat format) {
         BufferedImage image = new BufferedImage(
             fractalImage.width(),
@@ -42,7 +45,11 @@ public final class ImageUtils {
         for (int y = 0; y < fractalImage.height(); y++) {
             for (int x = 0; x < fractalImage.width(); x++) {
                 Pixel pixel = fractalImage.pixel(x, y);
-                int rgb = (pixel.hitCount() << 16) | (pixel.hitCount() << 8) | pixel.hitCount();
+                int rgb = (pixel.hitCount()
+                    << HEXADECIMAL_BIT_SHIFT)
+                    | (pixel.hitCount()
+                    << EIGHT_BIT_SHIFT)
+                    | pixel.hitCount();
                 bufferedImage.setRGB(x, y, rgb);
             }
         }

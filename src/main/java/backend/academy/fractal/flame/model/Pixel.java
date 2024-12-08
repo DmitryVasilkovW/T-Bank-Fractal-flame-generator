@@ -6,6 +6,8 @@ import lombok.Setter;
 
 @Getter
 public class Pixel {
+    private static final int MAX_COLOR = 255;
+
     private Color color;
     private int hitCount = 0;
     @Setter
@@ -36,14 +38,13 @@ public class Pixel {
     }
 
     public void add(Pixel other) {
-        int r = Math.min(255, Math.max(0, this.color.getRed() + other.color.getRed()));
-        int g = Math.min(255, Math.max(0, this.color.getGreen() + other.color.getGreen()));
-        int b = Math.min(255, Math.max(0, this.color.getBlue() + other.color.getBlue()));
+        int r = Math.min(MAX_COLOR, Math.max(0, this.color.getRed() + other.color.getRed()));
+        int g = Math.min(MAX_COLOR, Math.max(0, this.color.getGreen() + other.color.getGreen()));
+        int b = Math.min(MAX_COLOR, Math.max(0, this.color.getBlue() + other.color.getBlue()));
 
         color = new Color(r, g, b);
         this.hitCount += other.hitCount;
     }
-
 
     public void addAverageRGB(int r, int g, int b) {
         int newR = (getR() + r) / 2;

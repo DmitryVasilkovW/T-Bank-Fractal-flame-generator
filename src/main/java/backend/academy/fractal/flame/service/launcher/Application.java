@@ -44,6 +44,40 @@ public class Application implements CommandLineRunner {
     private static final Rect DEFAULT_RECT = new Rect(-4, -3, 8, 6);
     private static final int DEFAULT_COLOR_DIVERSITY_INDEX = 4;
 
+    private static final String PROMPT_WIDTH = "Input width";
+    private static final String PROMPT_HEIGHT = "Input height";
+    private static final String PROMPT_SAMPLES = "Input samples";
+    private static final String PROMPT_ITERATIONS = "Input iterations";
+    private static final String PROMPT_THREADS = "Input threads";
+    private static final String PROMPT_RANDOMNESS = "Input degree of fractal creation";
+    private static final String PROMPT_GAMMA = "Input gamma";
+    private static final String PROMPT_COMPLEX_SHAPE = "Is it necessary to make a fractal with a more complex shape?";
+    private static final String PROMPT_GAMMA_CORRECTION = "If gamma correction is necessary?";
+    private static final String PROMPT_SYMMETRY = "If symmetry is necessary?";
+    private static final String PROMPT_HORIZONTAL_SYMMETRY = "Need horizontal symmetry?";
+    private static final String PROMPT_IMAGE_PATH = "Input path";
+    private static final String PROMPT_COLOR_DIVERSITY_INDEX = "Input color diversity index";
+    private static final String PROMPT_RENDERING_AREA = "Input rendering area (format: x y width height):";
+    private static final String PROMPT_TRANSFORMATION = "Enter a transformation (or leave empty to finish):";
+    private static final String PROMPT_COLORS = "Enter a color (or leave empty to finish):";
+    private static final String PROMPT_YES_NO = "Enter yes or no";
+    private static final String PROMPT_AVAILABLE_COLORS = "Available color themes:";
+    private static final String PROMPT_AVAILABLE_TRANSFORMATIONS = "Available transformations:";
+
+    private static final String ERROR_INCORRECT_INPUT = "Incorrect input";
+    private static final String ERROR_INVALID_COLOR_DIVERSITY = "Invalid color diversity index";
+    private static final String ERROR_INCORRECT_DATA_FORMAT = "Incorrect data format";
+    private static final String ERROR_UNSUPPORTED_IMAGE_FORMAT = "Image format '%s' unsupported.";
+    private static final String ERROR_NO_EXTENSION = "Incorrect file format. No extension.";
+
+    private static final String SUCCESS_RENDER_TIME = "Render time: %d ms";
+    private static final String SUCCESS_SAVE_IMAGE = "The fractal has been successfully saved to %s";
+
+    private static final int INDEX_OF_X = 0;
+    private static final int INDEX_OF_Y = 1;
+    private static final int INDEX_OF_WIDTH = 2;
+    private static final int INDEX_OF_HEIGHT = 3;
+
     private final Printer printer;
     private final Reader reader;
     private final TransformationChain transformationChain;
@@ -67,18 +101,18 @@ public class Application implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
-        int width = getPositiveNumInput("Input width", DEFAULT_WIDTH);
-        int height = getPositiveNumInput("Input height", DEFAULT_HEIGHT);
-        int samples = getPositiveNumInput("Input samples", DEFAULT_SAMPLES);
-        int iterations = getPositiveNumInput("Input iterations", DEFAULT_ITERATIONS);
-        int threads = getPositiveNumInput("Input threads", DEFAULT_THREADS);
+        int width = getPositiveNumInput(PROMPT_WIDTH, DEFAULT_WIDTH);
+        int height = getPositiveNumInput(PROMPT_HEIGHT, DEFAULT_HEIGHT);
+        int samples = getPositiveNumInput(PROMPT_SAMPLES, DEFAULT_SAMPLES);
+        int iterations = getPositiveNumInput(PROMPT_ITERATIONS, DEFAULT_ITERATIONS);
+        int threads = getPositiveNumInput(PROMPT_THREADS, DEFAULT_THREADS);
         int degreeOfRandomnessOfFractalCreation = getPositiveNumInput(
-            "Input degree of fractal creation", DEFAULT_RANDOMNESS_DEGREE);
-        double gamma = getPositiveNumInput("Input gamma", DEFAULT_GAMMA);
-        boolean complicateFlameShape = getBoolInput("Is it necessary to make a fractal with a more complex shape?");
-        boolean isGammaCorrectionNecessary = getBoolInput("If gamma correction is necessary?");
-        boolean isSymmetryNecessary = getBoolInput("if symmetry is necessary?");
-        boolean horizontal = getBoolInput("Need horizontal symmetry?");
+            PROMPT_RANDOMNESS, DEFAULT_RANDOMNESS_DEGREE);
+        double gamma = getPositiveNumInput(PROMPT_GAMMA, DEFAULT_GAMMA);
+        boolean complicateFlameShape = getBoolInput(PROMPT_COMPLEX_SHAPE);
+        boolean isGammaCorrectionNecessary = getBoolInput(PROMPT_GAMMA_CORRECTION);
+        boolean isSymmetryNecessary = getBoolInput(PROMPT_SYMMETRY);
+        boolean horizontal = getBoolInput(PROMPT_HORIZONTAL_SYMMETRY);
 
         FractalImage canvas = FractalImage.create(width, height);
 
@@ -104,7 +138,7 @@ public class Application implements CommandLineRunner {
         long start = System.currentTimeMillis();
         canvas = FractalRenderer.render(fractalConfig, renderingArea, threads);
         long end = System.currentTimeMillis();
-        printer.println("Render time: " + (end - start) + " ms");
+        printer.println(String.format(SUCCESS_RENDER_TIME, (end - start)));
 
         if (isGammaCorrectionNecessary) {
             var gc = new GammaCorrectionProcessor(gamma);
@@ -121,11 +155,11 @@ public class Application implements CommandLineRunner {
             ImageUtils.saveColorfulImage(canvas, Path.of(path), imageFormat);
         }
 
-        printer.println("The fractal has been successfully saved to "  + path);
+        printer.println(String.format(SUCCESS_SAVE_IMAGE, path));
     }
 
     private void parseImagePath() {
-        printer.println("input path");
+        printer.println(PROMPT_IMAGE_PATH);
         String filePath = reader.readLineAsString();
 
         if (filePath == null || filePath.isEmpty()) {
@@ -136,7 +170,7 @@ public class Application implements CommandLineRunner {
 
         int dotIndex = filePath.lastIndexOf(".");
         if (dotIndex == -1 || dotIndex == filePath.length() - 1) {
-            throw new IllegalArgumentException("Incorrect file format. No extension.");
+            throw new IllegalArgumentException(ERROR_NO_EXTENSION);
         }
 
         String extension = filePath.substring(dotIndex + 1).toUpperCase();
@@ -144,14 +178,13 @@ public class Application implements CommandLineRunner {
             imageFormat = ImageFormat.valueOf(extension);
             path = filePath;
         } catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException("Image format '" + extension + "' unsupported.", e);
+            throw new IllegalArgumentException(String.format(ERROR_UNSUPPORTED_IMAGE_FORMAT, extension), e);
         }
     }
 
     private boolean getBoolInput(String message) {
         printer.println(message);
-        printer.println("(This will slow the process down a bit)");
-        printer.println("enter yes or no");
+        printer.println(PROMPT_YES_NO);
 
         while (true) {
             String line = reader.readLineAsString().toLowerCase();
@@ -165,7 +198,7 @@ public class Application implements CommandLineRunner {
                 return false;
             }
 
-            printer.println("incorrect input");
+            printer.println(ERROR_INCORRECT_INPUT);
         }
     }
 
@@ -184,7 +217,7 @@ public class Application implements CommandLineRunner {
                     throw new NumberFormatException();
                 }
             } catch (NumberFormatException e) {
-                printer.println("incorrect input");
+                printer.println(ERROR_INCORRECT_INPUT);
             }
         }
     }
@@ -200,7 +233,7 @@ public class Application implements CommandLineRunner {
     }
 
     private int getColorDiversityIndex() {
-        printer.println("input color diversity index");
+        printer.println(PROMPT_COLOR_DIVERSITY_INDEX);
 
         while (true) {
             String line = reader.readLineAsString();
@@ -216,12 +249,14 @@ public class Application implements CommandLineRunner {
                 }
                 return colorDiversityIndex;
             } catch (NumberFormatException e) {
-                printer.println("invalid color diversity index");
+                printer.println(ERROR_INVALID_COLOR_DIVERSITY);
             }
         }
     }
 
     private ColorTheme getColorTheme() {
+        printer.println(PROMPT_COLORS);
+        printer.println(PROMPT_AVAILABLE_COLORS);
         showAllColors();
 
         while (true) {
@@ -259,6 +294,8 @@ public class Application implements CommandLineRunner {
 
     private List<Transformation> getTransformations() {
         var transformations = new ArrayList<Transformation>();
+        printer.println(PROMPT_TRANSFORMATION);
+        printer.println(PROMPT_AVAILABLE_TRANSFORMATIONS);
         showAllTransformations();
         boolean stop = false;
 
@@ -302,6 +339,7 @@ public class Application implements CommandLineRunner {
     }
 
     private Rect getRect() {
+        printer.println(PROMPT_RENDERING_AREA);
         Optional<Rect> rectO = Optional.empty();
         while (rectO.isEmpty()) {
             String rectParams = reader.readLineAsString();
@@ -318,14 +356,14 @@ public class Application implements CommandLineRunner {
 
         String[] parts = rectParams.trim().split("\\s+");
         try {
-            int x = Integer.parseInt(parts[0]);
-            int y = Integer.parseInt(parts[1]);
-            int w = Integer.parseInt(parts[2]);
-            int h = Integer.parseInt(parts[3]);
+            int x = Integer.parseInt(parts[INDEX_OF_X]);
+            int y = Integer.parseInt(parts[INDEX_OF_Y]);
+            int w = Integer.parseInt(parts[INDEX_OF_WIDTH]);
+            int h = Integer.parseInt(parts[INDEX_OF_HEIGHT]);
 
             return Optional.of(new Rect(x, y, w, h));
         } catch (Exception e) {
-            printer.println("Incorrect data format");
+            printer.println(ERROR_INCORRECT_DATA_FORMAT);
             return Optional.empty();
         }
     }

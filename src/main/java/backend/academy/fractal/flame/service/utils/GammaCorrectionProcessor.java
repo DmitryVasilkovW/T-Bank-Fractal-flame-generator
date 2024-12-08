@@ -3,8 +3,9 @@ package backend.academy.fractal.flame.service.utils;
 import backend.academy.fractal.flame.model.Pixel;
 
 public class GammaCorrectionProcessor implements ImageProcessor {
-
     private final double gamma;
+
+    private final static int GAMMA_COLOR = 255;
 
     public GammaCorrectionProcessor(double gamma) {
         this.gamma = gamma;
@@ -32,9 +33,9 @@ public class GammaCorrectionProcessor implements ImageProcessor {
                 int blue = (int) (pixel.color().getBlue() * Math.pow(pixel.normal(), 1.0 / gamma));
 
                 pixel.setRGB(
-                    Math.min(255, Math.max(0, red)),
-                    Math.min(255, Math.max(0, green)),
-                    Math.min(255, Math.max(0, blue))
+                    Math.min(GAMMA_COLOR, Math.max(0, red)),
+                    Math.min(GAMMA_COLOR, Math.max(0, green)),
+                    Math.min(GAMMA_COLOR, Math.max(0, blue))
                 );
             }
         }
